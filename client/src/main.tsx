@@ -7,9 +7,10 @@ import { Toaster } from './components/ui/toaster.tsx';
 
 import Login from './pages/Login.tsx';
 
+import CreateDesign from './pages/admin/CreateDesign.tsx';
+import Orders from './pages/admin/Orders.tsx';
+import Reports from './pages/admin/Reports.tsx';
 import CreateAccount from './pages/CreateAccount.tsx';
-import Payment from './pages/Payment.tsx';
-import SMS from './pages/SMS.tsx';
 import AdminRoot from './root/AdminRoot.tsx';
 
 const router = createBrowserRouter([
@@ -18,13 +19,18 @@ const router = createBrowserRouter([
     element: <AdminRoot />,
     children: [
       {
-        path: 'sms',
-        element: <SMS />,
+        path: 'reports',
+        element: <Reports />,
       },
 
       {
-        path: 'payment',
-        element: <Payment />,
+        path: 'orders',
+        element: <Orders />,
+      },
+
+      {
+        path: 'create-design',
+        element: <CreateDesign />,
       },
     ],
   },
