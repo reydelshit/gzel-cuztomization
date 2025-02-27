@@ -1,9 +1,8 @@
+import BackgroundImage from '@/assets/gzel.jpg';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import BGImage from '@/assets/bg.png';
 import { useState } from 'react';
-import { Separator } from '@/components/ui/separator';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -27,33 +26,49 @@ const Login = () => {
     }
   };
   return (
-    <div className=" bg-[#272626] bg-center p-8 w-full min-h-screen h-full flex items-center justify-center flex-col px-[6rem] ">
+    <div
+      style={{
+        backgroundImage: `url(${BackgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+      className="bg-center p-8 w-full min-h-screen h-full flex items-center justify-center flex-col px-[6rem] "
+    >
       <div className="w-full text-center flex  justify-center items-center gap-[5rem]">
-        <div className=" bg-[#FFF5ED] py-4 px-[3rem] w-[30%] h-[400px] text-center rounded-md ">
-          <h1 className="font-bold text-2xl my-4">Tupi Mallengke</h1>
-          <Separator className="bg-black" />
+        <div className=" bg-[#74AB6E] py-4 px-[3rem] w-[25%] h-[500px] text-center items-center flex flex-col justify-center rounded-xl ">
+          <h1 className="text-white font-bold text-2xl my-4">
+            Online Apparel Customized Clothing
+          </h1>
           <form
             onSubmit={handleLogin}
-            className=" flex flex-col items-start text-start"
+            className=" flex flex-col items-start text-start w-full"
           >
-            <Label className="my-2 text-md font-thin">Username</Label>
             <Input
               onChange={(e) => setUsername(e.target.value)}
-              className="h-[3rem] border-2 rounded-md border-black"
+              className="h-[4rem] placeholder:text-center placeholder:font-bold border-2  my-4 border-black bg-white rounded-xl text-center"
               type="text"
+              placeholder="Username"
             />
 
-            <Label className="my-2 text-md font-thin">Password</Label>
             <Input
               onChange={(e) => setPassword(e.target.value)}
-              className="h-[3rem] border-2  rounded-md border-black"
+              className="h-[4rem] placeholder:text-center placeholder:font-bold border-2   border-black bg-white rounded-xl text-center"
               type="password"
+              placeholder="Username"
             />
 
-            {error && <p className="text-red-500 my-4">{error}</p>}
+            <span className="block my-2 self-end text-white cursor-pointer">
+              <Link to="/create">Create Account</Link>
+            </span>
+
+            {error && (
+              <p className="text-red-500 bg-white p-2 w-full rounded-md my-4">
+                {error}
+              </p>
+            )}
             <Button
               type="submit"
-              className="rounded-md self-center my-4 bg-black text-white h-[3rem] w-[10rem]"
+              className="self-center my-4 bg-white text-black  h-[3rem] w-full shadow-md rounded-xl"
             >
               Login
             </Button>

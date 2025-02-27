@@ -1,5 +1,4 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import App from './App.tsx';
 import './index.css';
 
 import React from 'react';
@@ -8,6 +7,7 @@ import { Toaster } from './components/ui/toaster.tsx';
 
 import Login from './pages/Login.tsx';
 
+import CreateAccount from './pages/CreateAccount.tsx';
 import Payment from './pages/Payment.tsx';
 import SMS from './pages/SMS.tsx';
 import AdminRoot from './root/AdminRoot.tsx';
@@ -31,6 +31,11 @@ const router = createBrowserRouter([
   {
     path: 'login',
     element: <Login />,
+  },
+
+  {
+    path: 'create',
+    element: <CreateAccount />,
   },
 ]);
 
