@@ -63,7 +63,7 @@ router.post(
   async (req: Request, res: Response): Promise<void> => {
     const { designName, designData } = req.body;
     const designImage = req.file
-      ? `/uploads/designs/${req.file.filename}`
+      ? `uploads/designs/${req.file.filename}`
       : null;
 
     if (!designName || !designData || !designImage) {
@@ -90,26 +90,25 @@ router.post(
   },
 );
 
-// ✅ Update a design
 router.put(
   '/update/:id',
-  upload.single('design'),
+  upload.single('design_image'),
   async (req: Request, res: Response) => {
-    const { designName } = req.body;
+    const { designName, designData } = req.body;
     const { id } = req.params;
 
     try {
       const db = await databaseConnectionPromise;
 
       let query =
-        'UPDATE save_design SET designName = ? WHERE saveDesignID = ?';
-      let values = [designName, id];
+        'UPDATE save_design SET designName = ?, designData = ? WHERE saveDesignID = ?';
+      let values = [designName, designData, id];
 
       if (req.file) {
-        const newDesignPath = `/uploads/designs/${req.file.filename}`;
+        const newDesignPath = `uploads/designs/${req.file.filename}`;
         query =
-          'UPDATE save_design SET designName = ?, designPath = ? WHERE saveDesignID = ?';
-        values = [designName, newDesignPath, id];
+          'UPDATE save_design SET designName = ?, designPath = ?, designData = ? WHERE saveDesignID = ?';
+        values = [designName, newDesignPath, designData, id];
       }
 
       await db.query(query, values);

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,62 +13,94 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 export function SaveDesignDialog({
   canvasRef,
+  saveDesignID,
+  isForUpdate,
+  designNameUpdate,
 }: {
   canvasRef: React.RefObject<any>;
+  saveDesignID: string | undefined;
+  isForUpdate?: boolean;
+  designNameUpdate: string;
 }) {
   const [designName, setDesignName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSaveDesign = async () => {
+  useEffect(() => {
+    if (isForUpdate) {
+      setDesignName(designNameUpdate || '');
+    }
+  }, [isForUpdate, designNameUpdate]);
+
+  const handleSaveOrUpdateDesign = async (saveDesignID?: string) => {
     if (!canvasRef.current) return;
 
-    // Convert canvas to PNG data URL
-    const dataURL = canvasRef.current.toDataURL('image/png');
-
-    // Convert Base64 to Blob
-    const blob = await (await fetch(dataURL)).blob();
-
-    // Get Fabric.js JSON
-    const designJSON = JSON.stringify(canvasRef.current.toJSON());
-
-    const formData = new FormData();
-    formData.append('designName', designName);
-    formData.append(
-      'design_image',
-      blob,
-      `${designName || 'custom-tshirt'}.png`,
-    );
-    formData.append('designData', designJSON); // Add JSON data
-
-    console.log('formData:', formData);
     try {
       setIsLoading(true);
 
-      const res = await axios.post(
-        `${import.meta.env.VITE_SERVER_LINK}/designs/create`,
-        formData,
-        { headers: { 'Content-Type': 'multipart/form-data' } },
+      // Convert canvas to image
+      const dataURL = canvasRef.current.toDataURL('image/png');
+      const blob = await (await fetch(dataURL)).blob();
+      const designJSON = JSON.stringify(canvasRef.current.toJSON());
+
+      // Create form data
+      const formData = new FormData();
+      formData.append('designName', designName);
+      formData.append(
+        'design_image',
+        blob,
+        `${designName || 'custom-tshirt'}.png`,
       );
+      formData.append('designData', designJSON);
+
+      // Debugging: Log form data
+      for (const pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
+      }
+
+      let res;
+      if (saveDesignID) {
+        // Update design
+        res = await axios.put(
+          `${import.meta.env.VITE_SERVER_LINK}/designs/update/${saveDesignID}`,
+          formData,
+          { headers: { 'Content-Type': 'multipart/form-data' } },
+        );
+
+        navigate('/saved-designs');
+      } else {
+        // Create new design
+        res = await axios.post(
+          `${import.meta.env.VITE_SERVER_LINK}/designs/create`,
+          formData,
+          { headers: { 'Content-Type': 'multipart/form-data' } },
+        );
+      }
 
       if (res.data.status === 'success') {
         toast({
-          title: 'Design Saved',
-          description: 'Your design has been successfully saved.',
+          title: saveDesignID ? 'Design Updated' : 'Design Saved',
+          description: `Your design has been successfully ${
+            saveDesignID ? 'updated' : 'saved'
+          }.`,
         });
 
-        // Close modal
+        // Reset state
         setIsOpen(false);
         setDesignName('');
       }
     } catch (error) {
-      console.error('Error saving design:', error);
+      console.error('Error saving/updating design:', error);
       toast({
         title: 'Error',
-        description: 'Failed to save the design. Please try again.',
+        description: `Failed to ${
+          saveDesignID ? 'update' : 'save'
+        } the design. Please try again.`,
         variant: 'destructive',
       });
     } finally {
@@ -103,7 +135,14 @@ export function SaveDesignDialog({
           </div>
         </div>
         <DialogFooter>
-          <Button onClick={handleSaveDesign} disabled={isLoading}>
+          <Button
+            onClick={() =>
+              handleSaveOrUpdateDesign(
+                isForUpdate ? saveDesignID?.toString() : undefined,
+              )
+            }
+            disabled={isLoading}
+          >
             {isLoading ? 'Saving...' : 'Save'}
           </Button>
         </DialogFooter>

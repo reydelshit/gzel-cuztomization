@@ -55,15 +55,16 @@ const SavedDesigns = () => {
 
   const handleTShirtClick = (
     tshirt: string,
-    designId: number,
+    saveDesignID: number,
     designData: object,
+    designName: string,
   ) => {
     navigate(
       `/create-design?tshirt=${encodeURIComponent(
         tshirt,
-      )}&designId=${designId}&design=${encodeURIComponent(
+      )}&saveDesignID=${saveDesignID}&design=${encodeURIComponent(
         JSON.stringify(designData),
-      )}`,
+      )}&designName=${designName}`,
     );
   };
 
@@ -105,6 +106,7 @@ const SavedDesigns = () => {
                       }`,
                       design.saveDesignID,
                       design.designData,
+                      design.designName,
                     )
                   }
                   src={

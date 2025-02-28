@@ -30,11 +30,14 @@ const CreateDesign: React.FC = () => {
   const canvasRef = useRef<fabric.Canvas | null>(null);
   const savedCanvasDataRef = useRef<string | null>(null);
   const [switchCanvas, setSwitchCanvas] = useState(false);
+  const [isForUpdate, setIsForUpdate] = useState(false);
 
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const selectedTShirt = params.get('tshirt') || '';
   const designData = params.get('design');
+  const saveDesignID = params.get('saveDesignID') || '';
+  const designName = params.get('designName') || '';
 
   const [selectedFont, setSelectedFont] = useState('Arial');
   // const [tshirtImage, setTshirtImage] = useState<fabric.Image | null>(null);
@@ -65,16 +68,18 @@ const CreateDesign: React.FC = () => {
     if (designData) {
       try {
         const parsedDesign = JSON.parse(decodeURIComponent(designData));
+
         canvas.loadFromJSON(parsedDesign, () => {
           canvas.renderAll();
         });
       } catch (error) {
         console.error('Error loading design:', error);
       }
+
+      setIsForUpdate(true);
     } else if (savedCanvasDataRef.current) {
-      // Restore the canvas state if previously saved
       canvas.loadFromJSON(savedCanvasDataRef.current, () => {
-        canvas.renderAll(); // Ensure it refreshes
+        canvas.renderAll();
       });
     } else if (selectedTShirt) {
       // Reload the T-shirt image if no saved state
@@ -105,6 +110,10 @@ const CreateDesign: React.FC = () => {
         canvas.renderAll(); // Force refresh
       });
     }
+
+    setTimeout(() => {
+      canvas.renderAll();
+    }, 100);
 
     // Handle delete key event
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -348,7 +357,12 @@ const CreateDesign: React.FC = () => {
             </div>
           ) : (
             <div className="flex justify-center items-center h-screen w-full relative">
-              <SaveDesignDialog canvasRef={canvasRef} />
+              <SaveDesignDialog
+                saveDesignID={saveDesignID}
+                isForUpdate={isForUpdate}
+                canvasRef={canvasRef}
+                designNameUpdate={designName}
+              />
               <canvas id="tshirt-canvas"></canvas>
             </div>
           )}
