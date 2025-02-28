@@ -1,5 +1,5 @@
 import type * as React from 'react';
-import { Download, Pencil, Type } from 'lucide-react';
+import { Download, ImagePlus, Pencil, Type } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,6 +16,7 @@ import {
 import { Separator } from '@/components/ui/separator';
 
 const Customize2DSideBar = ({
+  addImage,
   patterns,
   addPattern,
   addText,
@@ -29,6 +30,7 @@ const Customize2DSideBar = ({
   setSelectedFont,
   selectedFont,
 }: {
+  addImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
   patterns: { name: string; src: string }[];
   addPattern: (src: string) => void;
   addText: () => void;
@@ -43,7 +45,7 @@ const Customize2DSideBar = ({
   selectedFont: string;
 }) => {
   return (
-    <Card className="w-56 h-[90%] border shadow-md">
+    <Card className="w-56 h-fit border shadow-md">
       <CardHeader className="px-4 py-3 border-b">
         <CardTitle className="text-lg font-medium">Design Tools</CardTitle>
       </CardHeader>
@@ -194,11 +196,40 @@ const Customize2DSideBar = ({
 
           <Separator />
 
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium mb-2 flex items-center">
+              <div className="w-4 h-4 rounded-full bg-primary/20 mr-2 flex items-center justify-center">
+                <span className="text-xs text-primary">4</span>
+              </div>
+              Upload Image
+            </h3>
+            <div className="flex items-center justify-center w-full">
+              <Label
+                htmlFor="image-upload"
+                className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed rounded-lg cursor-pointer hover:bg-muted/50"
+              >
+                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                  <ImagePlus className="w-8 h-8 mb-3 text-gray-400" />
+                  <p className="text-sm text-gray-500">Click to upload</p>
+                </div>
+                <Input
+                  id="image-upload"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={addImage}
+                />
+              </Label>
+            </div>
+          </div>
+
+          <Separator />
+
           {/* Download Section */}
           <div>
             <h3 className="text-sm font-medium mb-2 flex items-center">
               <div className="w-4 h-4 rounded-full bg-primary/20 mr-2 flex items-center justify-center">
-                <span className="text-xs text-primary">4</span>
+                <span className="text-xs text-primary">5</span>
               </div>
               Export
             </h3>

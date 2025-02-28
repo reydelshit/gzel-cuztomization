@@ -6,10 +6,11 @@ import pattern1 from '@/assets/pattern1.avif';
 
 import { Button } from '@/components/ui/button';
 import { useLocation } from 'react-router-dom';
-import Customize2DSideBar from '../components/Customize2DSideBar';
 
-import ThreeDCanvas, { DEFAULT_TEXTURE } from './3DCanvas';
 import { Customize3DSidebar } from '../components/Customize3DSidebar';
+import ThreeDCanvas, { DEFAULT_TEXTURE } from './3DCanvas';
+import Customize2DSideBar from '../components/Customize2DSideBar';
+import { SaveDesignDialog } from '../components/SaveDesign2D';
 
 const patterns = [
   { name: 'Stripes', src: pattern1 },
@@ -211,6 +212,37 @@ const CreateDesign: React.FC = () => {
     }
   };
 
+  const addImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!canvasRef.current) return;
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const imageUrl = e.target?.result as string;
+      fabric.Image.fromURL(imageUrl).then((img) => {
+        if (!canvasRef.current) return;
+
+        img.set({
+          left: 300,
+          top: 300,
+          scaleX: 0.5,
+          scaleY: 0.5,
+          selectable: true,
+          cornerStyle: 'circle',
+          transparentCorners: false,
+          borderColor: 'red',
+        });
+
+        canvasRef.current.add(img);
+        canvasRef.current.setActiveObject(img);
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  //   3D CANVAS
+
   const [uploadedTexture, setUploadedTexture] =
     useState<string>(DEFAULT_TEXTURE);
   const [tshirtColor, setTshirtColor] = useState<string>('white');
@@ -276,6 +308,7 @@ const CreateDesign: React.FC = () => {
           />
         ) : (
           <Customize2DSideBar
+            addImage={addImage}
             patterns={patterns}
             addPattern={addPattern}
             addText={addText}
@@ -300,7 +333,8 @@ const CreateDesign: React.FC = () => {
           />
         </div>
       ) : (
-        <div className="flex justify-center items-center h-screen w-full">
+        <div className="flex justify-center items-center h-screen w-full relative">
+          <SaveDesignDialog canvasRef={canvasRef} />
           <canvas id="tshirt-canvas"></canvas>
         </div>
       )}
