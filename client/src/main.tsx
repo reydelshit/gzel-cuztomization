@@ -12,6 +12,7 @@ import Orders from './pages/admin/Orders.tsx';
 import Reports from './pages/admin/Reports.tsx';
 import CreateAccount from './pages/CreateAccount.tsx';
 import AdminRoot from './root/AdminRoot.tsx';
+import SavedDesigns from './pages/admin/SavedDesigns.tsx';
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,11 @@ const router = createBrowserRouter([
       {
         path: 'create-design',
         element: <CreateDesign />,
+      },
+
+      {
+        path: 'saved-designs',
+        element: <SavedDesigns />,
       },
     ],
   },

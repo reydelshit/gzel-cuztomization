@@ -44,6 +44,11 @@ function App() {
               <Link className="font-semibold" to="/create-design">
                 Create Design
               </Link>
+
+              <Link className="font-semibold" to="/saved-designs">
+                Saved Designs
+              </Link>
+
               <Link className="font-semibold" to="/orders">
                 Orders
               </Link>

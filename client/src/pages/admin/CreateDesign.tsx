@@ -10,7 +10,8 @@ import { useLocation } from 'react-router-dom';
 import { Customize3DSidebar } from '../components/Customize3DSidebar';
 import ThreeDCanvas, { DEFAULT_TEXTURE } from './3DCanvas';
 import Customize2DSideBar from '../components/Customize2DSideBar';
-import { SaveDesignDialog } from '../components/SaveDesign2D';
+import TShirtSelection from '../components/2DTShirtSelection';
+import { SaveDesignDialog } from '../components/DialogSaveDesign2D';
 
 const patterns = [
   { name: 'Stripes', src: pattern1 },
@@ -42,7 +43,7 @@ const CreateDesign: React.FC = () => {
   const [brushSize, setBrushSize] = useState(5);
 
   useEffect(() => {
-    if (switchCanvas) return; // Skip if in 3D mode
+    if (switchCanvas) return;
 
     const canvasElement = document.getElementById(
       'tshirt-canvas',
@@ -272,71 +273,89 @@ const CreateDesign: React.FC = () => {
 
   return (
     <div className="flex flex-row-reverse ">
-      <div>
-        <Button
-          onClick={() => {
-            if (!switchCanvas && canvasRef.current) {
-              // Save current canvas as JSON before disposing
-              savedCanvasDataRef.current = JSON.stringify(
-                canvasRef.current.toJSON(),
-              );
+      {selectedTShirt ? (
+        <>
+          {' '}
+          <div>
+            <Button
+              onClick={() => {
+                if (!switchCanvas && canvasRef.current) {
+                  // Save current canvas as JSON before disposing
+                  savedCanvasDataRef.current = JSON.stringify(
+                    canvasRef.current.toJSON(),
+                  );
 
-              canvasRef.current.dispose();
-              canvasRef.current = null;
-            }
+                  canvasRef.current.dispose();
+                  canvasRef.current = null;
+                }
 
-            setSwitchCanvas(!switchCanvas);
+                setSwitchCanvas(!switchCanvas);
 
-            // Ensure fabric.js refreshes when switching back
-            setTimeout(() => {
-              if (!switchCanvas && canvasRef.current) {
-                canvasRef.current.renderAll(); // Force re-render
-              }
-            }, 100);
-          }}
-          className="my-2"
-        >
-          Switch 3D
-        </Button>
+                // Ensure fabric.js refreshes when switching back
+                setTimeout(() => {
+                  if (!switchCanvas && canvasRef.current) {
+                    canvasRef.current.renderAll(); // Force re-render
+                  }
+                }, 100);
+              }}
+              className="my-2"
+            >
+              Switch 3D
+            </Button>
 
-        {switchCanvas ? (
-          <Customize3DSidebar
-            handleImageUpload={handleImageUpload}
-            tshirtColor={tshirtColor}
-            setTshirtColor={setTshirtColor}
-            exportDesign3D={exportDesign3D}
-          />
-        ) : (
-          <Customize2DSideBar
-            addImage={addImage}
-            patterns={patterns}
-            addPattern={addPattern}
-            addText={addText}
-            toggleDrawingMode={toggleDrawingMode}
-            isDrawing={isDrawing}
-            brushColor={brushColor}
-            handleBrushColorChange={handleBrushColorChange}
-            brushSize={brushSize}
-            handleBrushSizeChange={handleBrushSizeChange}
-            exportDesign={exportDesign}
-            setSelectedFont={setSelectedFont}
-            selectedFont={selectedFont}
-          />
-        )}
-      </div>
-
-      {switchCanvas ? (
-        <div className="flex justify-center items-center h-screen w-full">
-          <ThreeDCanvas
-            uploadedTexture={uploadedTexture}
-            tshirtColor={tshirtColor}
-          />
-        </div>
+            {switchCanvas ? (
+              <Customize3DSidebar
+                handleImageUpload={handleImageUpload}
+                tshirtColor={tshirtColor}
+                setTshirtColor={setTshirtColor}
+                exportDesign3D={exportDesign3D}
+              />
+            ) : (
+              <Customize2DSideBar
+                addImage={addImage}
+                patterns={patterns}
+                addPattern={addPattern}
+                addText={addText}
+                toggleDrawingMode={toggleDrawingMode}
+                isDrawing={isDrawing}
+                brushColor={brushColor}
+                handleBrushColorChange={handleBrushColorChange}
+                brushSize={brushSize}
+                handleBrushSizeChange={handleBrushSizeChange}
+                exportDesign={exportDesign}
+                setSelectedFont={setSelectedFont}
+                selectedFont={selectedFont}
+              />
+            )}
+          </div>
+          {switchCanvas ? (
+            <div className="flex justify-center items-center h-screen w-full">
+              <ThreeDCanvas
+                uploadedTexture={uploadedTexture}
+                tshirtColor={tshirtColor}
+              />
+            </div>
+          ) : (
+            <div className="flex justify-center items-center h-screen w-full relative">
+              <SaveDesignDialog canvasRef={canvasRef} />
+              <canvas id="tshirt-canvas"></canvas>
+            </div>
+          )}
+        </>
       ) : (
-        <div className="flex justify-center items-center h-screen w-full relative">
-          <SaveDesignDialog canvasRef={canvasRef} />
-          <canvas id="tshirt-canvas"></canvas>
-        </div>
+        <>
+          {' '}
+          <div className="w-full flex flex-col gap-8 p-8">
+            <div className="h-[150px] flex flex-col items-center justify-center">
+              <h1 className="text-4xl font-bold">Start your Design now!</h1>
+              <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Quisquam, voluptates.
+              </p>
+            </div>
+            <TShirtSelection />
+          </div>
+        </>
       )}
     </div>
   );
