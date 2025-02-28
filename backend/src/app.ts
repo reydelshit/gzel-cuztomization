@@ -16,6 +16,9 @@ app.get('/', (req: Request, res: Response) => {
   res.send('Welcome to the Express + TypeScript API');
 });
 
+console.log('Available routes:');
+routes.stack.forEach((route) => console.log(route.route?.path));
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

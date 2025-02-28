@@ -1,17 +1,21 @@
 import { Button } from '@/components/ui/button';
+import { toast } from '@/hooks/use-toast';
 import axios from 'axios';
 import { Plus } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface TshirtDesignType {
   saveDesignID: number;
   designPath: string;
   designName: string;
   created_at: string;
+  designData: object;
 }
 
 const SavedDesigns = () => {
+  const navigate = useNavigate();
+
   const [tshirtDesigns, setTshirtDesigns] = useState<TshirtDesignType[]>([]);
 
   const fetchDesigns = useCallback(async () => {
@@ -31,6 +35,38 @@ const SavedDesigns = () => {
     fetchDesigns();
   }, [fetchDesigns]);
 
+  const deleteDesign = async (id: number) => {
+    try {
+      const res = await axios.delete(
+        `${import.meta.env.VITE_SERVER_LINK}/designs/delete/${id}`,
+      );
+      console.log(res.data);
+
+      toast({
+        title: 'Design Deleted',
+        description: 'Your design has been successfully deleted.',
+      });
+
+      fetchDesigns();
+    } catch (error) {
+      console.error('Error deleting design ID:', id, error);
+    }
+  };
+
+  const handleTShirtClick = (
+    tshirt: string,
+    designId: number,
+    designData: object,
+  ) => {
+    navigate(
+      `/create-design?tshirt=${encodeURIComponent(
+        tshirt,
+      )}&designId=${designId}&design=${encodeURIComponent(
+        JSON.stringify(designData),
+      )}`,
+    );
+  };
+
   return (
     <>
       {/* Header section */}
@@ -45,19 +81,42 @@ const SavedDesigns = () => {
       </div>
 
       {/* T-shirt designs grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
         {tshirtDesigns.map((design, index) => (
           <div key={index} className="flex flex-col">
             <div className="text-sm font-medium">{design.designName}</div>
+            <Button
+              onClick={() => {
+                deleteDesign(design.saveDesignID);
+              }}
+              variant="destructive"
+            >
+              Delete
+            </Button>
             {/* <div className="text-xs text-gray-500 mb-2">{design.subtitle}</div> */}
             <div className={` rounded overflow-hidden`}>
               <div className="relative aspect-square">
                 <img
-                  src={
-                    `${import.meta.env.VITE_SERVER_LINK}/` + design.designPath
+                  onClick={() =>
+                    design.designPath &&
+                    handleTShirtClick(
+                      `${import.meta.env.VITE_SERVER_LINK}/${
+                        design.designPath
+                      }`,
+                      design.saveDesignID,
+                      design.designData,
+                    )
                   }
-                  alt={design.designName}
+                  src={
+                    design.designPath
+                      ? `${import.meta.env.VITE_SERVER_LINK}/${
+                          design.designPath
+                        }`
+                      : '/fallback-image.jpg'
+                  }
+                  alt={design.designName || 'T-shirt Design'}
                   className="object-cover"
+                  loading="lazy"
                 />
               </div>
             </div>

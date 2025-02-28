@@ -7,9 +7,9 @@ import { designRouter } from '../api/design';
 
 const router = Router();
 
-router.use('/tenants', tenantRouter);
-router.use('/payments', paymentLogRouter);
-router.use('/misc', miscRouter);
+// router.use('/tenants', tenantRouter);
+// router.use('/payments', paymentLogRouter);
+// router.use('/misc', miscRouter);
 
 // new
 

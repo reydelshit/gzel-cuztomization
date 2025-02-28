@@ -31,6 +31,10 @@ export function SaveDesignDialog({
 
     // Convert Base64 to Blob
     const blob = await (await fetch(dataURL)).blob();
+
+    // Get Fabric.js JSON
+    const designJSON = JSON.stringify(canvasRef.current.toJSON());
+
     const formData = new FormData();
     formData.append('designName', designName);
     formData.append(
@@ -38,7 +42,9 @@ export function SaveDesignDialog({
       blob,
       `${designName || 'custom-tshirt'}.png`,
     );
+    formData.append('designData', designJSON); // Add JSON data
 
+    console.log('formData:', formData);
     try {
       setIsLoading(true);
 

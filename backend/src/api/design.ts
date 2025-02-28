@@ -1,144 +1,159 @@
-import express, { Router } from 'express';
+import express, { Request, Response, Router } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import { databaseConnection } from '../connections/DBConnection';
+import { databaseConnectionPromise } from '../connections/DBConnection';
 
 const router = Router();
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadPath = path.join(__dirname, '..', 'uploads');
-    console.log('Upload path:', uploadPath);
-
+    const uploadPath = path.join(__dirname, '../uploads/designs');
     if (!fs.existsSync(uploadPath)) {
       fs.mkdirSync(uploadPath, { recursive: true });
-      console.log('Created upload folder.');
     }
-
     cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
-    const filename = Date.now() + path.extname(file.originalname);
-    console.log('Filename:', filename);
-    cb(null, filename);
+    cb(null, `${Date.now()}-${file.originalname}`);
   },
 });
 
 const upload = multer({ storage });
 
 // ✅ Get all designs
-router.get('/', (req, res) => {
-  const query = 'SELECT * FROM save_design';
-
-  databaseConnection.query(query, (err, data) => {
-    if (err)
-      return res.status(500).json({ error: 'Database error', details: err });
-    return res.json(data);
-  });
+router.get('/', async (req, res) => {
+  try {
+    const db = await databaseConnectionPromise;
+    const [data] = await db.query('SELECT * FROM save_design');
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: 'Database error', details: err });
+  }
 });
 
-// ✅ Get a single design by ID
-router.get('/:id', (req, res) => {
-  const query = 'SELECT * FROM save_design WHERE saveDesignID = ?';
-  const id = req.params.id;
+// ✅ Get a design by ID
+router.get('/designs/:id', async (req: Request, res: Response) => {
+  const { id } = req.params;
 
-  databaseConnection.query(query, [id], (err, data: any[]) => {
-    if (err)
-      return res.status(500).json({ error: 'Database error', details: err });
-    return res.json(data[0]);
-  });
+  try {
+    const db = await databaseConnectionPromise;
+    const [rows]: any = await db.query(
+      `SELECT * FROM save_design WHERE id = ?`,
+      [id],
+    );
+
+    if (rows.length > 0) {
+      res.json({ status: 'success', design: rows[0] });
+    } else {
+      res.status(404).json({ status: 'error', message: 'Design not found' });
+    }
+  } catch (error) {
+    console.error('Error fetching design:', error);
+    res
+      .status(500)
+      .json({ status: 'error', message: 'Failed to fetch design' });
+  }
 });
 
 // ✅ Create a new design
 router.post(
   '/create',
   upload.single('design_image'),
-  (req: express.Request, res: express.Response): void => {
-    if (!req.file) {
-      res.status(400).json({ message: 'No image uploaded' });
-      return;
+  async (req: Request, res: Response): Promise<void> => {
+    const { designName, designData } = req.body;
+    const designImage = req.file
+      ? `/uploads/designs/${req.file.filename}`
+      : null;
+
+    if (!designName || !designData || !designImage) {
+      res
+        .status(400)
+        .json({ status: 'error', message: 'Missing required fields' });
+      return; // Important: Prevents further execution
     }
 
-    const { designName } = req.body;
+    try {
+      const db = await databaseConnectionPromise;
+      const [result]: any = await db.query(
+        `INSERT INTO save_design (designName, designPath, designData, created_at) VALUES (?, ?, ?, NOW())`,
+        [designName, designImage, designData],
+      );
 
-    // Image path to store in the database
-    const designPath = path.join('uploads', req.file.filename);
-    const createdAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
-
-    const query = `
-      INSERT INTO save_design (designPath, designName, created_at) 
-      VALUES (?, ?, ?);
-    `;
-    const values = [designPath, designName, createdAt];
-
-    databaseConnection.query(query, values, (err, data) => {
-      if (err) {
-        console.error('Database error:', err);
-        res.status(500).json({ error: 'Database insert failed' });
-        return;
-      }
-
-      res.json({
-        status: 'success',
-        message: 'Design saved successfully!',
-        data: { designName, designPath },
-      });
-    });
+      res.json({ status: 'success', saveDesignID: result.insertId });
+    } catch (error) {
+      console.error('Error saving design:', error);
+      res
+        .status(500)
+        .json({ status: 'error', message: 'Failed to save design' });
+    }
   },
 );
 
 // ✅ Update a design
-router.put('/update/:id', upload.single('design'), (req, res) => {
-  const { designName } = req.body;
-  const id = req.params.id;
+router.put(
+  '/update/:id',
+  upload.single('design'),
+  async (req: Request, res: Response) => {
+    const { designName } = req.body;
+    const { id } = req.params;
 
-  let query = 'UPDATE save_design SET designName = ? WHERE saveDesignID = ?';
-  let values = [designName, id];
+    try {
+      const db = await databaseConnectionPromise;
 
-  if (req.file) {
-    const newDesignPath = `/uploads/${req.file.filename}`;
-    query =
-      'UPDATE save_design SET designName = ?, designPath = ? WHERE saveDesignID = ?';
-    values = [designName, newDesignPath, id];
-  }
+      let query =
+        'UPDATE save_design SET designName = ? WHERE saveDesignID = ?';
+      let values = [designName, id];
 
-  databaseConnection.query(query, values, (err, data) => {
-    if (err) return res.status(500).json({ error: 'Failed to update design' });
+      if (req.file) {
+        const newDesignPath = `/uploads/designs/${req.file.filename}`;
+        query =
+          'UPDATE save_design SET designName = ?, designPath = ? WHERE saveDesignID = ?';
+        values = [designName, newDesignPath, id];
+      }
 
-    return res.json({
-      message: 'Design updated successfully',
-      status: 'success',
-    });
-  });
-});
+      await db.query(query, values);
+      res.json({ message: 'Design updated successfully', status: 'success' });
+    } catch (error) {
+      console.error('Error updating design:', error);
+      res
+        .status(500)
+        .json({ status: 'error', message: 'Failed to update design' });
+    }
+  },
+);
 
 // ✅ Delete a design
-router.delete('/delete/:id', (req, res) => {
-  const query = 'SELECT designPath FROM save_design WHERE saveDesignID = ?';
-  const id = req.params.id;
+router.delete(
+  '/delete/:id',
+  async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
 
-  databaseConnection.query(query, [id], (err, results: any[]) => {
-    if (err || results.length === 0)
-      return res.status(404).json({ error: 'Design not found' });
+    try {
+      const db = await databaseConnectionPromise;
+      const [results]: any = await db.query(
+        'SELECT designPath FROM save_design WHERE saveDesignID = ?',
+        [id],
+      );
 
-    const filePath = path.join(__dirname, '../', results[0].designPath);
-    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      if (results.length === 0) {
+        res.status(404).json({ error: 'Design not found' });
+        return; // ✅ Prevents further execution
+      }
 
-    databaseConnection.query(
-      'DELETE FROM save_design WHERE saveDesignID = ?',
-      [id],
-      (deleteErr, data) => {
-        if (deleteErr)
-          return res.status(500).json({ error: 'Failed to delete design' });
+      const filePath = path.join(__dirname, '../', results[0].designPath);
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
 
-        return res.json({
-          message: 'Design deleted successfully',
-          status: 'success',
-        });
-      },
-    );
-  });
-});
+      await db.query('DELETE FROM save_design WHERE saveDesignID = ?', [id]);
+
+      res.json({ message: 'Design deleted successfully', status: 'success' });
+    } catch (error) {
+      console.error('Error deleting design:', error);
+      res
+        .status(500)
+        .json({ status: 'error', message: 'Failed to delete design' });
+    }
+  },
+);
 
 export const designRouter = router;

@@ -34,6 +34,7 @@ const CreateDesign: React.FC = () => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const selectedTShirt = params.get('tshirt') || '';
+  const designData = params.get('design');
 
   const [selectedFont, setSelectedFont] = useState('Arial');
   // const [tshirtImage, setTshirtImage] = useState<fabric.Image | null>(null);
@@ -60,8 +61,18 @@ const CreateDesign: React.FC = () => {
 
     const canvas = canvasRef.current;
 
-    // Restore the canvas state if previously saved
-    if (savedCanvasDataRef.current) {
+    // Restore the design if designData exists
+    if (designData) {
+      try {
+        const parsedDesign = JSON.parse(decodeURIComponent(designData));
+        canvas.loadFromJSON(parsedDesign, () => {
+          canvas.renderAll();
+        });
+      } catch (error) {
+        console.error('Error loading design:', error);
+      }
+    } else if (savedCanvasDataRef.current) {
+      // Restore the canvas state if previously saved
       canvas.loadFromJSON(savedCanvasDataRef.current, () => {
         canvas.renderAll(); // Ensure it refreshes
       });
@@ -116,7 +127,7 @@ const CreateDesign: React.FC = () => {
         canvasRef.current = null;
       }
     };
-  }, [selectedTShirt, switchCanvas]);
+  }, [selectedTShirt, switchCanvas, designData]);
 
   const addPattern = (patternSrc: string) => {
     console.log(patternSrc, 'first'); //working
