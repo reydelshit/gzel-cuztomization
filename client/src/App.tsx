@@ -31,7 +31,7 @@ function App() {
         </div>
       </header>
 
-      <div className="flex flex-grow w-full">
+      <div className="flex w-full">
         {showSidebar && (
           <aside className="w-[16rem] bg-[#272626] text-[#fff6f2] flex flex-col text-start p-8 min-h-screen">
             <nav className="flex flex-col mt-[2rem] text-xl">
@@ -44,11 +44,9 @@ function App() {
               <Link className="font-semibold" to="/create-design">
                 Create Design
               </Link>
-
               <Link className="font-semibold" to="/saved-designs">
                 Saved Designs
               </Link>
-
               <Link className="font-semibold" to="/orders">
                 Orders
               </Link>
