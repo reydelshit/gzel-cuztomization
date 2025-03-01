@@ -31,6 +31,9 @@ export function SaveDesignDialog({
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
+  const userRole = localStorage.getItem('userRole');
+  const userID = userRole === 'admin' ? '0' : localStorage.getItem('userID');
+
   useEffect(() => {
     if (isForUpdate) {
       setDesignName(designNameUpdate || '');
@@ -57,6 +60,8 @@ export function SaveDesignDialog({
         `${designName || 'custom-tshirt'}.png`,
       );
       formData.append('designData', designJSON);
+      formData.append('user_id', userID || '0');
+      formData.append('isSuggestion', 'no');
 
       // Debugging: Log form data
       for (const pair of formData.entries()) {
@@ -110,7 +115,7 @@ export function SaveDesignDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger className="absolute top-5 left-5 z-40" asChild>
+      <DialogTrigger asChild>
         <Button>Save Design</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

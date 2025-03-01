@@ -1,21 +1,19 @@
 import App from '@/App';
 import { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const AdminRoot = () => {
-  const { pathname } = useLocation();
   const navigate = useNavigate();
-
-  const isLoginMallengke = localStorage.getItem('isLoginMallengke');
-  // const isLoginMallengke = true;
+  const isLoginMallengke = localStorage.getItem('isLoginMallengke') === 'true';
+  const userRole = localStorage.getItem('userRole');
 
   useEffect(() => {
-    if (!isLoginMallengke) {
+    if (!isLoginMallengke || userRole !== 'admin') {
       navigate('/login');
     }
-  }, [isLoginMallengke, navigate]);
+  }, [isLoginMallengke, userRole, navigate]);
 
-  return <App />;
+  return isLoginMallengke && userRole === 'admin' ? <App /> : null;
 };
 
 export default AdminRoot;

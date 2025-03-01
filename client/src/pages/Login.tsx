@@ -1,30 +1,75 @@
 import BackgroundImage from '@/assets/gzel.jpg';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
   const [error, setError] = useState('');
 
-  const usernameFromEnv = import.meta.env.VITE_USERNAME;
-  const passwordFromEnv = import.meta.env.VITE_PASSWORD;
+  const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+  const isLoginMallengke = localStorage.getItem('isLoginMallengke') === 'true';
+  const userRole = localStorage.getItem('userRole');
+
+  useEffect(() => {
+    if (!isLoginMallengke) {
+      navigate('/login');
+    } else if (userRole === 'admin') {
+      window.location.href = '/';
+    } else if (userRole === 'client') {
+      window.location.href = '/client';
+    } else {
+      window.location.href = '/login';
+    }
+  }, []);
+
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    localStorage.setItem('isLoginMallengke', 'true');
+    setError('');
 
-    if (username === usernameFromEnv && password === passwordFromEnv) {
-      console.log('login success');
+    if (
+      username === import.meta.env.VITE_USERNAME &&
+      password === import.meta.env.VITE_PASSWORD
+    ) {
+      console.log('Admin login successful');
+
+      localStorage.setItem('isLoginMallengke', 'true');
+      localStorage.setItem('userRole', 'admin');
 
       window.location.href = '/';
-    } else {
-      setError('Username or password is incorrect');
+      return;
+    }
+
+    try {
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_SERVER_LINK}/users/login`,
+        { username, password },
+      );
+
+      console.log('Login successful:', data);
+      localStorage.setItem('isLoginMallengke', 'true');
+      localStorage.setItem('userRole', data.userType);
+      localStorage.setItem('clientName', data.firstName + ' ' + data.lastName);
+      localStorage.setItem('userID', data.user_id);
+
+      console.log('Login successful:', data);
+
+      if (data.userType === 'client') {
+        window.location.href = '/client';
+      } else {
+        localStorage.setItem('userID', '0');
+        window.location.href = '/';
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setError((error as any).response?.data?.error || 'Invalid credentials');
     }
   };
+
   return (
     <div
       style={{

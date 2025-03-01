@@ -13,6 +13,8 @@ import Reports from './pages/admin/Reports.tsx';
 import CreateAccount from './pages/CreateAccount.tsx';
 import AdminRoot from './root/AdminRoot.tsx';
 import SavedDesigns from './pages/admin/SavedDesigns.tsx';
+import ClientRoot from './root/CustomerRoot.tsx';
+import SuggestionPage from './pages/client/SuggestionPage.tsx';
 
 const router = createBrowserRouter([
   {
@@ -37,6 +39,31 @@ const router = createBrowserRouter([
       {
         path: 'saved-designs',
         element: <SavedDesigns />,
+      },
+    ],
+  },
+
+  {
+    path: '/client',
+    element: <ClientRoot />,
+    children: [
+      {
+        path: 'create-design',
+        element: <CreateDesign />,
+      },
+      {
+        path: 'saved-designs',
+        element: <SavedDesigns />,
+      },
+
+      {
+        path: 'suggestions',
+        element: <SuggestionPage />,
+      },
+
+      {
+        path: 'orders',
+        element: <div> List of Customers Orders</div>,
       },
     ],
   },

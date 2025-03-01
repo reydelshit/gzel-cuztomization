@@ -23,10 +23,10 @@ interface TshirtDesignType {
   created_at: string;
   designData: object;
   user_id: number;
-  isSuggestion: boolean;
+  isSuggestion: string;
 }
 
-const SavedDesigns = () => {
+const SuggestionPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const userRole = localStorage.getItem('userRole');
@@ -102,11 +102,7 @@ const SavedDesigns = () => {
           userRole === 'admin' ? 'ml-6 ' : 'ml-0'
         }`}
       >
-        <h1 className="text-2xl font-bold text-black">
-          {location.pathname === '/client/saved-designs'
-            ? 'Saved Designs'
-            : 'Sample Designs'}
-        </h1>
+        <h1 className="text-2xl font-bold text-black">Sample Designs</h1>
         <Link to="/create-design">
           <Button className="transition-all hover:scale-105">
             <Plus size={16} className="mr-2" />
@@ -136,7 +132,11 @@ const SavedDesigns = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {tshirtDesigns
-              .filter((tshirt) => String(tshirt.user_id) === String(userID))
+              .filter(
+                (tshirt) =>
+                  String(tshirt.user_id) === '0' &&
+                  tshirt.isSuggestion === 'yes',
+              )
               .map((design, index) => (
                 <div
                   key={index}
@@ -222,38 +222,13 @@ const SavedDesigns = () => {
                   </div>
 
                   {/* Design Info */}
-                  <div className="p-4 flex flex-row items-center justify-between gap-3 ">
+                  <div className="p-4 flex flex-row items-center justify-between gap-3">
                     <h3
                       className="font-medium text-gray-800 truncate"
                       title={design.designName}
                     >
                       {design.designName || 'Untitled Design'}
                     </h3>
-
-                    {/* Delete Button with Confirmation */}
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Trash2 size={14} className="mr-2" />
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This will permanently delete the design "
-                            {design.designName}". This action cannot be undone.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction
-                            className="bg-red-500 hover:bg-red-600"
-                            onClick={() => deleteDesign(design.saveDesignID)}
-                          >
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
                   </div>
                 </div>
               ))}
@@ -264,4 +239,4 @@ const SavedDesigns = () => {
   );
 };
 
-export default SavedDesigns;
+export default SuggestionPage;

@@ -1,23 +1,26 @@
-import { Link, Outlet, useLocation } from 'react-router-dom';
-import Dashboard from './pages/Dashboard';
-import { Button } from './components/ui/button';
-import { Bell, LogOut, Menu, User } from 'lucide-react';
-import TShirtSelection from './pages/components/2DTShirtSelection';
-import { useState } from 'react';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { Bell, LogOut, Menu, User } from 'lucide-react';
+import { useState } from 'react';
+import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Button } from './components/ui/button';
+import TShirtSelection from './pages/components/TShirtSelection';
+
+export const handleLogout = () => {
+  localStorage.removeItem('isLoginMallengke');
+  localStorage.removeItem('clientName');
+  localStorage.removeItem('userRole');
+
+  window.location.href = '/login';
+};
 
 function App() {
   const path = useLocation().pathname;
   const [showSidebar, setShowSidebar] = useState(true);
 
-  const handleLogout = () => {
-    localStorage.removeItem('isLoginMallengke');
-    window.location.href = '/login';
-  };
   return (
     <div className="bg-[#D9D9D9] bg-center w-full min-h-screen flex flex-col">
       <header className="bg-white h-[5rem] flex justify-between items-center w-full p-4 shadow-xl">
@@ -25,7 +28,7 @@ function App() {
           <Button onClick={() => setShowSidebar(!showSidebar)}>
             {showSidebar ? <Menu /> : <Menu />}
           </Button>
-          <h1>GZEL Digital Design and Printing</h1>
+          <Link to="/"> GZEL Digital Design and Printing </Link>
         </div>
         <div className="flex gap-4">
           <Popover>
@@ -111,7 +114,7 @@ function App() {
         <main className="flex-grow min-h-screen">
           {path === '/' ? (
             <div className="min-h-screen ">
-              <div className="bg-gradient-to-r  py-16">
+              <div className=" py-16">
                 <div className="mx-auto max-w-7xl px-6 lg:px-8">
                   <div className="mx-auto max-w-2xl text-center">
                     <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">

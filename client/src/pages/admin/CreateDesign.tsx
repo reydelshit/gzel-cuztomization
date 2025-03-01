@@ -10,7 +10,7 @@ import { useLocation } from 'react-router-dom';
 import { Customize3DSidebar } from '../components/Customize3DSidebar';
 import ThreeDCanvas, { DEFAULT_TEXTURE } from './3DCanvas';
 import Customize2DSideBar from '../components/Customize2DSideBar';
-import TShirtSelection from '../components/2DTShirtSelection';
+import TShirtSelection from '../components/TShirtSelection';
 import { SaveDesignDialog } from '../components/DialogSaveDesign2D';
 
 const patterns = [
@@ -40,8 +40,6 @@ const CreateDesign: React.FC = () => {
   const designName = params.get('designName') || '';
 
   const [selectedFont, setSelectedFont] = useState('Arial');
-  // const [tshirtImage, setTshirtImage] = useState<fabric.Image | null>(null);
-  // const [colorOverlay, setColorOverlay] = useState<fabric.Rect | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [brushColor, setBrushColor] = useState('black');
   const [brushSize, setBrushSize] = useState(5);
@@ -357,12 +355,15 @@ const CreateDesign: React.FC = () => {
             </div>
           ) : (
             <div className="flex justify-center items-center h-screen w-full relative">
-              <SaveDesignDialog
-                saveDesignID={saveDesignID}
-                isForUpdate={isForUpdate}
-                canvasRef={canvasRef}
-                designNameUpdate={designName}
-              />
+              <div className="absolute top-5 left-5 z-40">
+                <h1 className="text-4xl font-bold my-2 ">CUSTOMIZE NOW!</h1>
+                <SaveDesignDialog
+                  saveDesignID={saveDesignID}
+                  isForUpdate={isForUpdate}
+                  canvasRef={canvasRef}
+                  designNameUpdate={designName}
+                />
+              </div>
               <canvas id="tshirt-canvas"></canvas>
             </div>
           )}
@@ -371,12 +372,19 @@ const CreateDesign: React.FC = () => {
         <>
           {' '}
           <div className="w-full flex flex-col gap-8 p-8">
-            <div className="h-[150px] flex flex-col items-center justify-center">
-              <h1 className="text-4xl font-bold">Start your Design now!</h1>
-              <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Quisquam, voluptates.
-              </p>
+            <div className=" py-16">
+              <div className="mx-auto max-w-7xl px-6 lg:px-8">
+                <div className="mx-auto max-w-2xl text-center">
+                  <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
+                    Start your Design now!
+                  </h1>
+                  <p className="mt-6 text-lg leading-8 text-gray-600">
+                    Create your unique custom t-shirt design with our
+                    easy-to-use tool. Choose from our premium quality shirts and
+                    bring your ideas to life.
+                  </p>
+                </div>
+              </div>
             </div>
             <TShirtSelection />
           </div>

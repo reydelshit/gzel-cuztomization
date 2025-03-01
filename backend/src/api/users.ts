@@ -3,10 +3,33 @@ import { databaseConnectionPromise } from '../connections/DBConnection';
 
 const router = Router();
 
-// ✅ Get all users
+router.post('/login', async (req: Request, res: Response) => {
+  const { username, password } = req.body;
+
+  try {
+    const connection = await databaseConnectionPromise;
+    const [data]: any = await connection.query(
+      'SELECT * FROM users WHERE email = ? AND password = ?',
+      [username, password],
+    );
+
+    if (data.length === 0) {
+      res.status(401).json({ error: 'Invalid username or password' });
+      return;
+    }
+
+    const user = data[0];
+
+    res.json({ ...user });
+  } catch (err) {
+    console.error('Database error:', err);
+    res.status(500).json({ error: 'Database error', details: err });
+  }
+});
+
 router.get('/', async (req: Request, res: Response): Promise<void> => {
   try {
-    const connection = await databaseConnectionPromise; // Await the connection
+    const connection = await databaseConnectionPromise;
     const [data] = await connection.query('SELECT * FROM users');
     res.json(data);
   } catch (err) {
@@ -15,12 +38,11 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
   }
 });
 
-// ✅ Get a specific user by ID
 router.get('/:id', async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
 
   try {
-    const connection = await databaseConnectionPromise; // Await the connection
+    const connection = await databaseConnectionPromise;
     const [data]: any = await connection.query(
       'SELECT * FROM users WHERE user_id = ?',
       [id],

@@ -57,35 +57,55 @@ router.get('/designs/:id', async (req: Request, res: Response) => {
 });
 
 // ✅ Create a new design
-router.post(
-  '/create',
+router.put(
+  '/update/:id',
   upload.single('design_image'),
-  async (req: Request, res: Response): Promise<void> => {
-    const { designName, designData } = req.body;
+  async (req: Request, res: Response) => {
+    const { designName, designData, user_id, isSuggestion } = req.body;
+    const { id } = req.params;
     const designImage = req.file
       ? `uploads/designs/${req.file.filename}`
       : null;
 
-    if (!designName || !designData || !designImage) {
+    if (!designName || !designData) {
       res
         .status(400)
         .json({ status: 'error', message: 'Missing required fields' });
-      return; // Important: Prevents further execution
+      return;
     }
 
     try {
       const db = await databaseConnectionPromise;
-      const [result]: any = await db.query(
-        `INSERT INTO save_design (designName, designPath, designData, created_at) VALUES (?, ?, ?, NOW())`,
-        [designName, designImage, designData],
-      );
+      let query = `
+        UPDATE save_design 
+        SET designName = ?, designData = ?, user_id = ?, isSuggestion = ?
+        WHERE saveDesignID = ?
+      `;
+      let values = [designName, designData, user_id, isSuggestion, id];
 
-      res.json({ status: 'success', saveDesignID: result.insertId });
+      if (designImage) {
+        query = `
+          UPDATE save_design 
+          SET designName = ?, designPath = ?, designData = ?, user_id = ?, isSuggestion = ?
+          WHERE saveDesignID = ?
+        `;
+        values = [
+          designName,
+          designImage,
+          designData,
+          user_id,
+          isSuggestion,
+          id,
+        ];
+      }
+
+      await db.query(query, values);
+      res.json({ status: 'success', message: 'Design updated successfully' });
     } catch (error) {
-      console.error('Error saving design:', error);
+      console.error('Error updating design:', error);
       res
         .status(500)
-        .json({ status: 'error', message: 'Failed to save design' });
+        .json({ status: 'error', message: 'Failed to update design' });
     }
   },
 );
