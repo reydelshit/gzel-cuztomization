@@ -49,21 +49,13 @@ const ThreeDCanvas: React.FC<ThreeDCanvasProps> = ({
   tshirtColor,
 }) => {
   return (
-    <div className="h-screen flex justify-center items-center flex-col ">
+    <div className="h-screen flex justify-center items-center flex-col w-full">
       <Canvas camera={{ position: [0, 0, 10] }}>
         <ambientLight intensity={0.5} />
         <directionalLight position={[2, 2, 2]} />
         <TShirt texture={uploadedTexture} color={tshirtColor} />
         <OrbitControls />
       </Canvas>
-
-      {/* <input type="file" accept="image/*" onChange={handleImageUpload} />
-      <input
-        type="color"
-        value={tshirtColor}
-        onChange={(e) => setTshirtColor(e.target.value)}
-      />
-      <button onClick={exportDesign}>Download Design</button> */}
     </div>
   );
 };
