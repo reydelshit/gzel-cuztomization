@@ -110,15 +110,24 @@ function App() {
 
         <main className="flex-grow min-h-screen">
           {path === '/' ? (
-            <div className="w-full flex flex-col gap-8 p-8">
-              <div className="h-[150px] flex flex-col items-center justify-center">
-                <h1 className="text-4xl font-bold">Start your Design now!</h1>
-                <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Quisquam, voluptates.
-                </p>
+            <div className="min-h-screen ">
+              <div className="bg-gradient-to-r  py-16">
+                <div className="mx-auto max-w-7xl px-6 lg:px-8">
+                  <div className="mx-auto max-w-2xl text-center">
+                    <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
+                      Start your Design now!
+                    </h1>
+                    <p className="mt-6 text-lg leading-8 text-gray-600">
+                      Create your unique custom t-shirt design with our
+                      easy-to-use tool. Choose from our premium quality shirts
+                      and bring your ideas to life.
+                    </p>
+                  </div>
+                </div>
               </div>
-              <TShirtSelection />
+              <main>
+                <TShirtSelection />
+              </main>
             </div>
           ) : (
             <Outlet />
