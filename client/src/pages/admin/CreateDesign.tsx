@@ -12,6 +12,7 @@ import ThreeDCanvas, { DEFAULT_TEXTURE } from './3DCanvas';
 import Customize2DSideBar from '../components/Customize2DSideBar';
 import TShirtSelection from '../components/TShirtSelection';
 import { SaveDesignDialog } from '../components/DialogSaveDesign2D';
+import { useThree } from '@react-three/fiber';
 
 const patterns = [
   { name: 'Stripes', src: pattern1 },
@@ -276,19 +277,20 @@ const CreateDesign: React.FC = () => {
     reader.readAsDataURL(file);
   };
 
-  // Export design as an image
-  const exportDesign3D = () => {
-    const canvas = document.querySelector('canvas');
-    if (!canvas) return;
+  const [exportDesign3D, setExportDesign3D] = useState<() => void>(() => {});
 
-    const imageURL = canvas.toDataURL('image/png');
+  // // Export design as an image
+  // const exportDesign3D = () => {
+  //   console.log('Exporting 3D design...');
 
-    const link = document.createElement('a');
-    link.href = imageURL;
-    link.download = 'custom-tshirt.png';
-    link.click();
-  };
+  //   const { gl } = useThree();
+  //   const dataURL = gl.domElement.toDataURL('image/png');
 
+  //   const link = document.createElement('a');
+  //   link.href = dataURL;
+  //   link.download = 'tshirt-design.png';
+  //   link.click();
+  // };
   return (
     <div className="flex flex-row-reverse ">
       {selectedTShirt ? (
@@ -298,7 +300,6 @@ const CreateDesign: React.FC = () => {
             <Button
               onClick={() => {
                 if (!switchCanvas && canvasRef.current) {
-                  // Save current canvas as JSON before disposing
                   savedCanvasDataRef.current = JSON.stringify(
                     canvasRef.current.toJSON(),
                   );
@@ -309,10 +310,9 @@ const CreateDesign: React.FC = () => {
 
                 setSwitchCanvas(!switchCanvas);
 
-                // Ensure fabric.js refreshes when switching back
                 setTimeout(() => {
                   if (!switchCanvas && canvasRef.current) {
-                    canvasRef.current.renderAll(); // Force re-render
+                    canvasRef.current.renderAll();
                   }
                 }, 100);
               }}
@@ -349,6 +349,7 @@ const CreateDesign: React.FC = () => {
           {switchCanvas ? (
             <div className="flex justify-center items-center h-screen w-full">
               <ThreeDCanvas
+                setExportDesign3D={setExportDesign3D}
                 uploadedTexture={uploadedTexture}
                 tshirtColor={tshirtColor}
               />
