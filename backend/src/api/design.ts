@@ -56,7 +56,42 @@ router.get('/designs/:id', async (req: Request, res: Response) => {
   }
 });
 
-// ✅ Create a new design
+router.put(
+  '/update-suggestions/:id',
+  async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const { isSuggestion } = req.body;
+
+      if (isSuggestion === undefined) {
+        res.status(400).json({ error: 'Missing isSuggestion value' });
+        return;
+      }
+
+      const db = await databaseConnectionPromise;
+      const [result]: any = await db.query(
+        'UPDATE save_design SET isSuggestion = ? WHERE saveDesignID = ?',
+        [isSuggestion, id],
+      );
+
+      if (result.affectedRows === 0) {
+        res.status(404).json({ error: 'Design not found' });
+        return;
+      }
+
+      res.json({
+        message: 'Suggestion status updated successfully',
+        status: 'success',
+      });
+    } catch (err) {
+      console.error('Error updating suggestion:', err);
+      res
+        .status(500)
+        .json({ status: 'error', message: 'Failed to update suggestion' });
+    }
+  },
+);
+
 router.put(
   '/update/:id',
   upload.single('design_image'),
@@ -110,39 +145,6 @@ router.put(
   },
 );
 
-router.put(
-  '/update/:id',
-  upload.single('design_image'),
-  async (req: Request, res: Response) => {
-    const { designName, designData } = req.body;
-    const { id } = req.params;
-
-    try {
-      const db = await databaseConnectionPromise;
-
-      let query =
-        'UPDATE save_design SET designName = ?, designData = ? WHERE saveDesignID = ?';
-      let values = [designName, designData, id];
-
-      if (req.file) {
-        const newDesignPath = `uploads/designs/${req.file.filename}`;
-        query =
-          'UPDATE save_design SET designName = ?, designPath = ?, designData = ? WHERE saveDesignID = ?';
-        values = [designName, newDesignPath, designData, id];
-      }
-
-      await db.query(query, values);
-      res.json({ message: 'Design updated successfully', status: 'success' });
-    } catch (error) {
-      console.error('Error updating design:', error);
-      res
-        .status(500)
-        .json({ status: 'error', message: 'Failed to update design' });
-    }
-  },
-);
-
-// ✅ Delete a design
 router.delete(
   '/delete/:id',
   async (req: Request, res: Response): Promise<void> => {
@@ -157,7 +159,7 @@ router.delete(
 
       if (results.length === 0) {
         res.status(404).json({ error: 'Design not found' });
-        return; // ✅ Prevents further execution
+        return;
       }
 
       const filePath = path.join(__dirname, '../', results[0].designPath);

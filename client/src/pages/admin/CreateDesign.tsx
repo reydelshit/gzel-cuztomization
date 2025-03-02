@@ -281,18 +281,6 @@ const CreateDesign: React.FC = () => {
 
   const [exportDesign3D, setExportDesign3D] = useState<() => void>(() => {});
 
-  // // Export design as an image
-  // const exportDesign3D = () => {
-  //   console.log('Exporting 3D design...');
-
-  //   const { gl } = useThree();
-  //   const dataURL = gl.domElement.toDataURL('image/png');
-
-  //   const link = document.createElement('a');
-  //   link.href = dataURL;
-  //   link.download = 'tshirt-design.png';
-  //   link.click();
-  // };
   return (
     <div className="flex flex-row-reverse ">
       {selectedTShirt ? (
@@ -359,7 +347,11 @@ const CreateDesign: React.FC = () => {
           ) : (
             <div className="flex justify-center items-center h-screen w-full relative">
               <div className="absolute top-5 left-5 z-40">
-                <h1 className="text-4xl font-bold my-2 ">CUSTOMIZE NOW!</h1>
+                <header className="flex h-[4rem] items-center justify-between px-6">
+                  <h1 className="text-2xl font-bold text-black uppercase italic">
+                    Customize your T-shirt
+                  </h1>
+                </header>
                 <SaveDesignDialog
                   saveDesignID={saveDesignID}
                   isForUpdate={isForUpdate}

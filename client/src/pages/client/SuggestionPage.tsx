@@ -51,24 +51,6 @@ const SuggestionPage = () => {
     fetchDesigns();
   }, [fetchDesigns]);
 
-  const deleteDesign = async (id: number) => {
-    try {
-      const res = await axios.delete(
-        `${import.meta.env.VITE_SERVER_LINK}/designs/delete/${id}`,
-      );
-      console.log(res.data);
-
-      toast({
-        title: 'Design Deleted',
-        description: 'Your design has been successfully deleted.',
-      });
-
-      fetchDesigns();
-    } catch (error) {
-      console.error('Error deleting design ID:', id, error);
-    }
-  };
-
   const handleTShirtClick = (
     tshirt: string,
     saveDesignID: number,
@@ -98,17 +80,23 @@ const SuggestionPage = () => {
     <div className="flex flex-col min-h-screen ">
       {/* Header */}
       <header
-        className={`sticky top-0 z-10 flex items-center justify-between p-4 px-6 bg-white rounded-bl-2xl ${
+        className={`sticky top-0 z-10 flex items-center justify-between p-4 px-6 rounded-bl-2xl ${
           userRole === 'admin' ? 'ml-6 ' : 'ml-0'
         }`}
       >
-        <h1 className="text-2xl font-bold text-black">Sample Designs</h1>
-        <Link to="/create-design">
-          <Button className="transition-all hover:scale-105">
-            <Plus size={16} className="mr-2" />
-            Add new design
-          </Button>
-        </Link>
+        <header className="flex h-[4rem] items-center justify-between px-6">
+          <h1 className="text-2xl font-bold text-black uppercase italic">
+            Suggestion Designs
+          </h1>
+        </header>
+        {userRole === 'admin' && (
+          <Link to="/create-design">
+            <Button className="transition-all hover:scale-105">
+              <Plus size={16} className="mr-2" />
+              Add new design
+            </Button>
+          </Link>
+        )}
       </header>
 
       {/* Main Content */}

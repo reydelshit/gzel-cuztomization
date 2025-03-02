@@ -59,7 +59,9 @@ export default function OrderDialog() {
       <div className="flex flex-row">
         {/* Left side - Order form */}
         <div className="p-6 md:w-1/2 md:border-r border-gray-200">
-          <h2 className="text-2xl font-medium text-gray-700 mb-6">Order</h2>
+          <h2 className="text-2xl font-medium text-gray-700 mb-6">
+            Place your order{' '}
+          </h2>
 
           <div className="space-y-6">
             <div>

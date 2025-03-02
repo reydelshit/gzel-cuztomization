@@ -58,7 +58,6 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
   }
 });
 
-// ✅ Create a new user
 router.post('/create', async (req: Request, res: Response): Promise<void> => {
   const { firstName, lastName, email, password } = req.body;
 
@@ -86,7 +85,6 @@ router.post('/create', async (req: Request, res: Response): Promise<void> => {
   }
 });
 
-// ✅ Update user information
 router.put(
   '/update/:id',
   async (req: Request, res: Response): Promise<void> => {
@@ -99,7 +97,7 @@ router.put(
     }
 
     try {
-      const connection = await databaseConnectionPromise; // Await the connection
+      const connection = await databaseConnectionPromise;
       const [result]: any = await connection.query(
         'UPDATE users SET firstName = ?, lastName = ?, email = ?, password = ? WHERE user_id = ?',
         [firstName, lastName, email, password, id],
@@ -118,14 +116,13 @@ router.put(
   },
 );
 
-// ✅ Delete a user
 router.delete(
   '/delete/:id',
   async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
 
     try {
-      const connection = await databaseConnectionPromise; // Await the connection
+      const connection = await databaseConnectionPromise;
       const [result]: any = await connection.query(
         'DELETE FROM users WHERE user_id = ?',
         [id],

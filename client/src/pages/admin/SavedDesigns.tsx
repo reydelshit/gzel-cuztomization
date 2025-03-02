@@ -15,6 +15,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface TshirtDesignType {
   saveDesignID: number;
@@ -23,14 +24,14 @@ interface TshirtDesignType {
   created_at: string;
   designData: object;
   user_id: number;
-  isSuggestion: boolean;
+  isSuggestion: string;
 }
 
 const SavedDesigns = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const userRole = localStorage.getItem('userRole');
-  const userID = localStorage.getItem('userID');
+  const userID = localStorage.getItem('userID') || 0;
   const [tshirtDesigns, setTshirtDesigns] = useState<TshirtDesignType[]>([]);
   const [hoveredDesign, setHoveredDesign] = useState<number | null>(null);
 
@@ -57,13 +58,14 @@ const SavedDesigns = () => {
         `${import.meta.env.VITE_SERVER_LINK}/designs/delete/${id}`,
       );
       console.log(res.data);
+      if (res.data.status === 'success') {
+        toast({
+          title: 'Design Deleted',
+          description: 'Your design has been successfully deleted.',
+        });
 
-      toast({
-        title: 'Design Deleted',
-        description: 'Your design has been successfully deleted.',
-      });
-
-      fetchDesigns();
+        fetchDesigns();
+      }
     } catch (error) {
       console.error('Error deleting design ID:', id, error);
     }
@@ -94,18 +96,41 @@ const SavedDesigns = () => {
     }
   };
 
+  const handleCheckedChange = async (tshirtID: number, checked: boolean) => {
+    try {
+      const response = await axios.put(
+        ` ${
+          import.meta.env.VITE_SERVER_LINK
+        }/designs/update-suggestions/${tshirtID}`,
+        {
+          isSuggestion: checked ? 'yes' : 'no',
+        },
+      );
+
+      if (response.data.status === 'success') {
+        toast({
+          title: checked
+            ? 'Design marked as suggestion'
+            : 'Design suggestion removed',
+          description: 'Design suggestions have been updated successfully.',
+        });
+
+        fetchDesigns();
+      }
+
+      console.log('Update response:', response.data);
+    } catch (error) {
+      console.error('Error updating suggestion status:', error);
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen ">
-      {/* Header */}
-      <header
-        className={`sticky top-0 z-10 flex items-center justify-between p-4 px-6 bg-white rounded-bl-2xl ${
-          userRole === 'admin' ? 'ml-6 ' : 'ml-0'
-        }`}
-      >
-        <h1 className="text-2xl font-bold text-black">
+      <header className="flex h-[4rem] items-center justify-between px-6">
+        <h1 className="text-2xl font-bold text-black uppercase italic">
           {location.pathname === '/client/saved-designs'
             ? 'Saved Designs'
-            : 'Sample Designs'}
+            : 'Saved Designs'}
         </h1>
         <Link to="/create-design">
           <Button className="transition-all hover:scale-105">
@@ -115,7 +140,6 @@ const SavedDesigns = () => {
         </Link>
       </header>
 
-      {/* Main Content */}
       <main className="flex-1 p-6">
         {tshirtDesigns.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-[50vh] text-center">
@@ -144,7 +168,22 @@ const SavedDesigns = () => {
                   onMouseEnter={() => setHoveredDesign(design.saveDesignID)}
                   onMouseLeave={() => setHoveredDesign(null)}
                 >
-                  {/* Design Image */}
+                  <div className="flex items-center space-x-2 my-4 self-end px-4">
+                    <Checkbox
+                      checked={design.isSuggestion === 'yes'}
+                      id={`suggestions-${design.saveDesignID}`}
+                      onCheckedChange={(checked: boolean) =>
+                        handleCheckedChange(design.saveDesignID, checked)
+                      }
+                    />
+                    <label
+                      htmlFor="suggestions"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Mark as Suggestion
+                    </label>
+                  </div>
+
                   <div
                     className="relative w-full pt-[100%] overflow-hidden bg-gray-100 cursor-pointer"
                     onClick={() =>
@@ -172,7 +211,6 @@ const SavedDesigns = () => {
                       loading="lazy"
                     />
 
-                    {/* Overlay with actions on hover */}
                     <div
                       className={`absolute inset-0 bg-black/50 flex items-center justify-center gap-2 transition-opacity duration-300 ${
                         hoveredDesign === design.saveDesignID
@@ -221,7 +259,6 @@ const SavedDesigns = () => {
                     </div>
                   </div>
 
-                  {/* Design Info */}
                   <div className="p-4 flex flex-row items-center justify-between gap-3 ">
                     <h3
                       className="font-medium text-gray-800 truncate"
@@ -230,7 +267,6 @@ const SavedDesigns = () => {
                       {design.designName || 'Untitled Design'}
                     </h3>
 
-                    {/* Delete Button with Confirmation */}
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Trash2 size={14} className="mr-2" />

@@ -1,19 +1,15 @@
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { Bell, LogOut, Menu, User } from 'lucide-react';
 import { useState } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Button } from './components/ui/button';
-import TShirtSelection from './pages/components/TShirtSelection';
+import { Outlet, useLocation } from 'react-router-dom';
 import { HeaderAdmin } from './pages/admin/HeaderAdmin';
+import { SidebarAdmin } from './pages/admin/SidebarAdmin';
+import TShirtSelection from './pages/components/TShirtSelection';
 
 export const handleLogout = () => {
   localStorage.removeItem('isLoginMallengke');
   localStorage.removeItem('clientName');
   localStorage.removeItem('userRole');
+
+  localStorage.removeItem('userID');
 
   window.location.href = '/login';
 };
@@ -31,42 +27,7 @@ function App() {
       />
 
       <div className="flex w-full">
-        {showSidebar && (
-          <aside className="w-[16rem] bg-transparent  flex flex-col text-start  min-h-screen justify-center">
-            <nav className="flex flex-col  text-xl bg-white border-2 p-4 h-[80%] mt-[-5rem] rounded-r-2xl shadow-xl">
-              <Link
-                className="font-semibold bg-[#74AB6E] p-2 rounded-lg text-white mb-2"
-                to="/"
-              >
-                Home
-              </Link>
-              <Link
-                className="font-semibold bg-[#74AB6E] p-2 rounded-lg text-white mb-2"
-                to="/reports"
-              >
-                Reports
-              </Link>
-              <Link
-                className="font-semibold bg-[#74AB6E] p-2 rounded-lg text-white mb-2"
-                to="/create-design"
-              >
-                Create Design
-              </Link>
-              <Link
-                className="font-semibold bg-[#74AB6E] p-2 rounded-lg text-white mb-2"
-                to="/saved-designs"
-              >
-                Saved Designs
-              </Link>
-              <Link
-                className="font-semibold bg-[#74AB6E] p-2 rounded-lg text-white mb-2"
-                to="/orders"
-              >
-                Orders
-              </Link>
-            </nav>
-          </aside>
-        )}
+        {showSidebar && <SidebarAdmin />}
 
         <main className="flex-grow min-h-screen">
           {path === '/' ? (

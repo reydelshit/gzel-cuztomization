@@ -15,7 +15,7 @@ interface HeaderClientProps {
 
 export function HeaderClient({ clientName, handleLogout }: HeaderClientProps) {
   return (
-    <header className="bg-white h-16 flex justify-between items-center w-full px-6 shadow-md">
+    <header className="bg-white h-20  flex justify-between items-center w-full px-6 shadow-md">
       <div className="flex items-center space-x-2">
         <Link
           to="/client"

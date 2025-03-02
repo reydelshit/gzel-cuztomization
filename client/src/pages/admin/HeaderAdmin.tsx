@@ -19,7 +19,7 @@ export function HeaderAdmin({
   setShowSidebar,
 }: HeaderAdminProps) {
   return (
-    <header className="bg-white h-20 flex justify-between items-center w-full px-6 shadow-lg">
+    <header className="bg-white h-20 flex justify-between items-center w-full px-6 shadow-xl">
       <div className="flex items-center space-x-4">
         <Button
           variant="ghost"

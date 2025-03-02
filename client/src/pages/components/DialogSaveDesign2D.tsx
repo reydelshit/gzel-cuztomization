@@ -63,21 +63,23 @@ export function SaveDesignDialog({
       formData.append('user_id', userID || '0');
       formData.append('isSuggestion', 'no');
 
-      // Debugging: Log form data
       for (const pair of formData.entries()) {
         console.log(pair[0], pair[1]);
       }
 
       let res;
       if (saveDesignID) {
-        // Update design
         res = await axios.put(
           `${import.meta.env.VITE_SERVER_LINK}/designs/update/${saveDesignID}`,
           formData,
           { headers: { 'Content-Type': 'multipart/form-data' } },
         );
 
-        navigate('/saved-designs');
+        if (userRole === 'admin') {
+          navigate('/saved-designs');
+        } else {
+          navigate('/client/saved-designs');
+        }
       } else {
         // Create new design
         res = await axios.post(
