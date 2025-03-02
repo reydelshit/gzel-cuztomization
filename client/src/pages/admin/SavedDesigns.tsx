@@ -168,22 +168,23 @@ const SavedDesigns = () => {
                   onMouseEnter={() => setHoveredDesign(design.saveDesignID)}
                   onMouseLeave={() => setHoveredDesign(null)}
                 >
-                  <div className="flex items-center space-x-2 my-4 self-end px-4">
-                    <Checkbox
-                      checked={design.isSuggestion === 'yes'}
-                      id={`suggestions-${design.saveDesignID}`}
-                      onCheckedChange={(checked: boolean) =>
-                        handleCheckedChange(design.saveDesignID, checked)
-                      }
-                    />
-                    <label
-                      htmlFor="suggestions"
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      Mark as Suggestion
-                    </label>
-                  </div>
-
+                  {userRole === 'admin' && (
+                    <div className="flex items-center space-x-2 my-4 self-end px-4">
+                      <Checkbox
+                        checked={design.isSuggestion === 'yes'}
+                        id={`suggestions-${design.saveDesignID}`}
+                        onCheckedChange={(checked: boolean) =>
+                          handleCheckedChange(design.saveDesignID, checked)
+                        }
+                      />
+                      <label
+                        htmlFor="suggestions"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        Mark as Suggestion
+                      </label>
+                    </div>
+                  )}
                   <div
                     className="relative w-full pt-[100%] overflow-hidden bg-gray-100 cursor-pointer"
                     onClick={() =>

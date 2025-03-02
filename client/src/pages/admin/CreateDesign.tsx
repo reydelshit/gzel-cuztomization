@@ -7,14 +7,12 @@ import pattern1 from '@/assets/pattern1.avif';
 import { Button } from '@/components/ui/button';
 import { useLocation } from 'react-router-dom';
 
-import { Customize3DSidebar } from '../components/Customize3DSidebar';
-import ThreeDCanvas, { DEFAULT_TEXTURE } from './3DCanvas';
-import Customize2DSideBar from '../components/Customize2DSideBar';
-import TShirtSelection from '../components/TShirtSelection';
-import { SaveDesignDialog } from '../components/DialogSaveDesign2D';
-import { useThree } from '@react-three/fiber';
-import OrderDialog from '../client/OrderDialog';
 import { OrderDialogTrigger } from '../client/OrderDialogTrigger';
+import Customize2DSideBar from '../components/Customize2DSideBar';
+import { Customize3DSidebar } from '../components/Customize3DSidebar';
+import { SaveDesignDialog } from '../components/DialogSaveDesign2D';
+import TShirtSelection from '../components/TShirtSelection';
+import ThreeDCanvas, { DEFAULT_TEXTURE } from './3DCanvas';
 
 const patterns = [
   { name: 'Stripes', src: pattern1 },
@@ -42,6 +40,8 @@ const CreateDesign: React.FC = () => {
   const saveDesignID = params.get('saveDesignID') || '';
   const designName = params.get('designName') || '';
 
+  const userRole = localStorage.getItem('userRole');
+
   const [selectedFont, setSelectedFont] = useState('Arial');
   const [isDrawing, setIsDrawing] = useState(false);
   const [brushColor, setBrushColor] = useState('black');
@@ -65,7 +65,6 @@ const CreateDesign: React.FC = () => {
 
     const canvas = canvasRef.current;
 
-    // Restore the design if designData exists
     if (designData) {
       try {
         const parsedDesign = JSON.parse(decodeURIComponent(designData));
@@ -83,7 +82,6 @@ const CreateDesign: React.FC = () => {
         canvas.renderAll();
       });
     } else if (selectedTShirt) {
-      // Reload the T-shirt image if no saved state
       fabric.Image.fromURL(selectedTShirt).then((img) => {
         if (!canvas) return;
 
@@ -108,7 +106,7 @@ const CreateDesign: React.FC = () => {
 
         // @ts-ignore
         img.sendToBack();
-        canvas.renderAll(); // Force refresh
+        canvas.renderAll();
       });
     }
 
@@ -116,7 +114,6 @@ const CreateDesign: React.FC = () => {
       canvas.renderAll();
     }, 100);
 
-    // Handle delete key event
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Delete' && canvasRef.current) {
         const activeObject = canvasRef.current.getActiveObject();
@@ -140,13 +137,11 @@ const CreateDesign: React.FC = () => {
   }, [selectedTShirt, switchCanvas, designData]);
 
   const addPattern = (patternSrc: string) => {
-    console.log(patternSrc, 'first'); //working
+    console.log(patternSrc, 'first');
 
     if (!canvasRef.current) return;
     fabric.Image.fromURL(patternSrc).then((img) => {
       if (!canvasRef.current) return;
-
-      console.log(patternSrc, 'second'); //not working
 
       img.set({
         left: 300,
@@ -202,7 +197,6 @@ const CreateDesign: React.FC = () => {
         isDrawingMode: true,
         freeDrawingBrush: new fabric.PencilBrush(canvasRef.current),
       });
-      // Set brush properties
       if (canvasRef.current && canvasRef.current.freeDrawingBrush) {
         canvasRef.current.freeDrawingBrush.color = brushColor;
         canvasRef.current.freeDrawingBrush.width = brushSize;
@@ -337,7 +331,19 @@ const CreateDesign: React.FC = () => {
             )}
           </div>
           {switchCanvas ? (
-            <div className="flex justify-center items-center h-screen w-full">
+            <div className="flex justify-center items-center h-screen w-full relative">
+              <div className="absolute top-5 left-5 z-40 flex flex-col space-y-4">
+                <header className="flex items-center justify-between">
+                  <h1 className="text-2xl font-bold text-black uppercase italic">
+                    Customize your T-shirt
+                  </h1>
+                </header>
+
+                <div className="flex space-x-4">
+                  {/* place order dialog  */}
+                  {userRole === 'client' && <OrderDialogTrigger />}
+                </div>
+              </div>
               <ThreeDCanvas
                 setExportDesign3D={setExportDesign3D}
                 uploadedTexture={uploadedTexture}
@@ -346,21 +352,26 @@ const CreateDesign: React.FC = () => {
             </div>
           ) : (
             <div className="flex justify-center items-center h-screen w-full relative">
-              <div className="absolute top-5 left-5 z-40">
-                <header className="flex h-[4rem] items-center justify-between px-6">
+              <div className="absolute top-5 left-5 z-40 flex flex-col space-y-4">
+                <header className="flex items-center justify-between">
                   <h1 className="text-2xl font-bold text-black uppercase italic">
                     Customize your T-shirt
                   </h1>
                 </header>
-                <SaveDesignDialog
-                  saveDesignID={saveDesignID}
-                  isForUpdate={isForUpdate}
-                  canvasRef={canvasRef}
-                  designNameUpdate={designName}
-                />
 
-                <OrderDialogTrigger />
+                <div className="flex space-x-4">
+                  <SaveDesignDialog
+                    saveDesignID={saveDesignID}
+                    isForUpdate={isForUpdate}
+                    canvasRef={canvasRef}
+                    designNameUpdate={designName}
+                  />
+
+                  {/* place order dialog  */}
+                  {userRole === 'client' && <OrderDialogTrigger />}
+                </div>
               </div>
+
               <canvas id="tshirt-canvas"></canvas>
             </div>
           )}

@@ -92,6 +92,39 @@ router.put(
   },
 );
 
+router.post(
+  '/create',
+  upload.single('design_image'),
+  async (req: Request, res: Response): Promise<void> => {
+    const { designName, designData, user_id, isSuggestion } = req.body;
+    const designImage = req.file
+      ? `uploads/designs/${req.file.filename}`
+      : null;
+
+    if (!designName || !designData || !designImage) {
+      res
+        .status(400)
+        .json({ status: 'error', message: 'Missing required fields' });
+      return;
+    }
+
+    try {
+      const db = await databaseConnectionPromise;
+      const [result]: any = await db.query(
+        `INSERT INTO save_design (designName, designPath, designData, created_at, user_id, isSuggestion) VALUES (?, ?, ?, NOW(), ?, ?)`,
+        [designName, designImage, designData, user_id, isSuggestion],
+      );
+
+      res.json({ status: 'success', saveDesignID: result.insertId });
+    } catch (error) {
+      console.error('Error saving design:', error);
+      res
+        .status(500)
+        .json({ status: 'error', message: 'Failed to save design' });
+    }
+  },
+);
+
 router.put(
   '/update/:id',
   upload.single('design_image'),

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const ListFabric = [
   {
@@ -26,7 +27,16 @@ const ListFabric = [
   },
 ];
 
-export default function OrderDialog() {
+export default function OrderDialog({
+  onProceedToPayment,
+}: {
+  onProceedToPayment: (orderData: {
+    fabric: string;
+    quantity: number;
+    measurements: { bust: string; waist: string; shoulder: string };
+    totalPrice: number;
+  }) => void;
+}) {
   const [fabric, setFabric] = useState('Cotton');
   const [quantity, setQuantity] = useState(1);
   const [measurements, setMeasurements] = useState({
@@ -52,10 +62,22 @@ export default function OrderDialog() {
       ...prev,
       [field]: value,
     }));
+    // console.log('Measurements:', measurements);
+  };
+
+  const handleProceedToPayment = () => {
+    const orderData = {
+      fabric,
+      quantity,
+      measurements,
+      totalPrice: totalPrice * quantity,
+    };
+
+    onProceedToPayment(orderData);
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg w-full max-w-4xl">
+    <div className="bg-white rounded-lg w-full max-w-4xl">
       <div className="flex flex-row">
         {/* Left side - Order form */}
         <div className="p-6 md:w-1/2 md:border-r border-gray-200">
@@ -165,12 +187,19 @@ export default function OrderDialog() {
               />
             </div>
 
-            <button
+            <Button
+              disabled={
+                !quantity ||
+                !measurements.bust ||
+                !measurements.waist ||
+                !measurements.shoulder
+              }
+              onClick={handleProceedToPayment}
               type="button"
-              className="w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-md transition-colors"
+              className="w-full h-[3rem]"
             >
-              Place order
-            </button>
+              Proceed to payment
+            </Button>
           </div>
         </div>
 
