@@ -13,6 +13,8 @@ import Customize2DSideBar from '../components/Customize2DSideBar';
 import TShirtSelection from '../components/TShirtSelection';
 import { SaveDesignDialog } from '../components/DialogSaveDesign2D';
 import { useThree } from '@react-three/fiber';
+import OrderDialog from '../client/OrderDialog';
+import { OrderDialogTrigger } from '../client/OrderDialogTrigger';
 
 const patterns = [
   { name: 'Stripes', src: pattern1 },
@@ -316,9 +318,9 @@ const CreateDesign: React.FC = () => {
                   }
                 }, 100);
               }}
-              className="my-2"
+              className="my-2 w-full"
             >
-              Switch 3D
+              {switchCanvas ? 'Switch to 2D' : 'Switch to 3D'}
             </Button>
 
             {switchCanvas ? (
@@ -364,6 +366,8 @@ const CreateDesign: React.FC = () => {
                   canvasRef={canvasRef}
                   designNameUpdate={designName}
                 />
+
+                <OrderDialogTrigger />
               </div>
               <canvas id="tshirt-canvas"></canvas>
             </div>

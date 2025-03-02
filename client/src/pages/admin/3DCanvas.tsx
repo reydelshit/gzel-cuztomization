@@ -1,6 +1,6 @@
-import { Canvas, useThree } from '@react-three/fiber';
-import { useEffect, useRef, useState } from 'react';
 import { OrbitControls, useGLTF } from '@react-three/drei';
+import { Canvas, useThree } from '@react-three/fiber';
+import { useEffect, useState } from 'react';
 import * as THREE from 'three';
 
 type TShirtProps = {

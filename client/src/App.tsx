@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Button } from './components/ui/button';
 import TShirtSelection from './pages/components/TShirtSelection';
+import { HeaderAdmin } from './pages/admin/HeaderAdmin';
 
 export const handleLogout = () => {
   localStorage.removeItem('isLoginMallengke');
@@ -23,55 +24,11 @@ function App() {
 
   return (
     <div className="bg-[#D9D9D9] bg-center w-full min-h-screen flex flex-col">
-      <header className="bg-white h-[5rem] flex justify-between items-center w-full p-4 shadow-xl">
-        <div className="flex gap-2 items-center">
-          <Button onClick={() => setShowSidebar(!showSidebar)}>
-            {showSidebar ? <Menu /> : <Menu />}
-          </Button>
-          <Link to="/"> GZEL Digital Design and Printing </Link>
-        </div>
-        <div className="flex gap-4">
-          <Popover>
-            <PopoverTrigger>
-              <Bell />
-            </PopoverTrigger>
-            <PopoverContent className="flex flex-col gap-2">
-              <span>
-                New Order from <strong>John Doe</strong>
-              </span>
-
-              <span>
-                New Order from <strong>John Doe</strong>
-              </span>
-
-              <span>
-                New Order from <strong>John Doe</strong>
-              </span>
-            </PopoverContent>
-          </Popover>
-
-          <Popover>
-            <PopoverTrigger>
-              <span className="flex gap-2">
-                <User />
-                Admin
-              </span>
-            </PopoverTrigger>
-            <PopoverContent>
-              <span
-                className="flex gap-2 w-full items-center justify-center cursor-pointer "
-                onClick={handleLogout}
-              >
-                <LogOut />
-                Logout
-              </span>
-              {/* <Button onClick={handleLogout}>
-             
-              </Button> */}
-            </PopoverContent>
-          </Popover>
-        </div>
-      </header>
+      <HeaderAdmin
+        handleLogout={handleLogout}
+        showSidebar={showSidebar}
+        setShowSidebar={setShowSidebar}
+      />
 
       <div className="flex w-full">
         {showSidebar && (
