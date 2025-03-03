@@ -353,7 +353,7 @@ const CreateDesign: React.FC = () => {
               />
             </div>
           ) : (
-            <div className="flex justify-center items-center h-screen w-full relative">
+            <div className="h-screen flex justify-center items-center flex-col w-full relative">
               <div className="absolute top-5 left-5 z-40 flex flex-col space-y-4">
                 <header className="flex items-center justify-between">
                   <h1 className="text-2xl font-bold text-black uppercase italic">

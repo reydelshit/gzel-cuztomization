@@ -1,8 +1,18 @@
 import axios from 'axios';
-import { FileTextIcon } from 'lucide-react';
+import { CheckCircle, FileTextIcon, XCircle } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { OrderCard, ProductOrders } from '../admin/Orders';
-
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 
 import { Badge } from '@/components/ui/badge';
@@ -36,6 +46,8 @@ const NewOrders = () => {
     null,
   );
 
+  const [orderStatus, setOrderStatus] = useState('pending');
+
   const fetchOrders = useCallback(async () => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_SERVER_LINK}/orders`);
@@ -57,6 +69,14 @@ const NewOrders = () => {
     pickup: 'bg-purple-100 bg-purple-500',
     done: 'bg-green-100 bg-green-500',
     cancelled: 'bg-red-100 bg-red-500',
+  };
+
+  const handleAcceptOrder = () => {
+    setOrderStatus('pending');
+  };
+
+  const handleDeclineOrder = () => {
+    setOrderStatus('cancelled');
   };
 
   return (
@@ -256,6 +276,18 @@ const NewOrders = () => {
                             ).toLocaleDateString()}
                           </p>
                         </div>
+
+                        <div>
+                          <p className="text-sm text-gray-500">Order Status</p>
+
+                          <span
+                            className={`capitalize px-3 py-1.5 text-sm font-medium ${
+                              statusColors[selectedOrder.status]
+                            }`}
+                          >
+                            {selectedOrder.status}
+                          </span>
+                        </div>
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
@@ -440,8 +472,129 @@ const NewOrders = () => {
               </CardContent>
 
               <CardFooter className="bg-gray-50 border-t px-6 py-4 mt-4 flex justify-end gap-3">
-                <Button variant="outline">Back to Orders</Button>
-                <Button>Update Status</Button>
+                <Button variant="outline" onClick={() => window.history.back()}>
+                  Back to Orders
+                </Button>
+
+                {orderStatus === 'pending' && (
+                  <>
+                    {/* Decline Order Alert Dialog */}
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                        >
+                          <XCircle className="mr-2 h-4 w-4" />
+                          Decline Order
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Decline Order #{selectedOrder.order_id}?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            <p className="mb-4">
+                              Are you sure you want to decline this order? This
+                              action cannot be undone.
+                            </p>
+
+                            {(selectedOrder.payment_method === 'gcash' ||
+                              selectedOrder.payment_method === 'paypal') && (
+                              <div className="bg-amber-50 border border-amber-200 rounded-md p-3 text-amber-800 text-sm mb-4">
+                                <p className="font-medium mb-1">
+                                  Important Note:
+                                </p>
+                                <p>
+                                  Since this order was paid via{' '}
+                                  {selectedOrder.payment_method}, the payment
+                                  will be automatically refunded to the
+                                  customer's account within 3-5 business days.
+                                </p>
+                              </div>
+                            )}
+
+                            <div className="mt-2">
+                              <p className="font-medium text-sm">
+                                Reason for declining (optional):
+                              </p>
+                              <textarea
+                                className="w-full mt-1 p-2 border border-gray-300 rounded-md text-sm"
+                                rows={3}
+                                placeholder="Enter reason for declining the order..."
+                              />
+                            </div>
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            className="bg-red-600 hover:bg-red-700 text-white"
+                            onClick={handleDeclineOrder}
+                          >
+                            Decline Order
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+
+                    {/* Accept Order Alert Dialog */}
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button className="bg-green-600 hover:bg-green-700 text-white">
+                          <CheckCircle className="mr-2 h-4 w-4" />
+                          Accept Order
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Accept Order #{selectedOrder.order_id}?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            <p className="mb-4">
+                              Are you sure you want to accept this order? The
+                              order status will be changed to "pending".
+                            </p>
+
+                            <div className="bg-green-50 border border-green-200 rounded-md p-3 text-green-800 text-sm">
+                              <p className="font-medium mb-1">
+                                What happens next:
+                              </p>
+                              <ul className="list-disc pl-5 space-y-1">
+                                <li>
+                                  The customer will be notified that their order
+                                  has been accepted
+                                </li>
+                                <li>
+                                  The order status will be changed to "pending"
+                                </li>
+                              </ul>
+                            </div>
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            className="bg-green-600 hover:bg-green-700 text-white"
+                            onClick={handleAcceptOrder}
+                          >
+                            Accept Order
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </>
+                )}
+
+                {orderStatus !== 'pending' && (
+                  <Button>
+                    {orderStatus === 'pending'
+                      ? 'Update Status'
+                      : 'View Details'}
+                  </Button>
+                )}
               </CardFooter>
             </Card>
           ) : (
