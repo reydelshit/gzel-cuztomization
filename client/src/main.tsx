@@ -10,14 +10,14 @@ import Login from './pages/Login.tsx';
 import CreateDesign from './pages/admin/CreateDesign.tsx';
 import Orders from './pages/admin/Orders.tsx';
 import Reports from './pages/admin/Reports.tsx';
+import SavedDesigns from './pages/admin/SavedDesigns.tsx';
+import NewOrders from './pages/client/NewOrders.tsx';
+import ProcessingOrders from './pages/client/ProcessingOrders.tsx';
+import Purchases from './pages/client/Purchases.tsx';
+import SuggestionPage from './pages/client/SuggestionPage.tsx';
 import CreateAccount from './pages/CreateAccount.tsx';
 import AdminRoot from './root/AdminRoot.tsx';
-import SavedDesigns from './pages/admin/SavedDesigns.tsx';
 import ClientRoot from './root/CustomerRoot.tsx';
-import SuggestionPage from './pages/client/SuggestionPage.tsx';
-import Purchases from './pages/client/Purchases.tsx';
-import NewOrders from './pages/client/NewOrders.tsx';
-import PendingOrders from './pages/client/PendingOrders.tsx';
 
 const router = createBrowserRouter([
   {
@@ -40,8 +40,8 @@ const router = createBrowserRouter([
       },
 
       {
-        path: 'orders/pending',
-        element: <PendingOrders />,
+        path: 'orders/processing',
+        element: <ProcessingOrders />,
       },
 
       {

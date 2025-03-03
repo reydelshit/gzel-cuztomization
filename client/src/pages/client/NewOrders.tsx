@@ -38,6 +38,9 @@ import {
   ShoppingBag,
   User,
 } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
+import useCreateNotif from '@/hooks/useCreateNotif';
+import { title } from 'process';
 
 const NewOrders = () => {
   const [productsOrders, setProductsOrders] = useState<ProductOrders[]>([]);
@@ -45,15 +48,18 @@ const NewOrders = () => {
   const [selectedOrder, setSelectedOrder] = useState<ProductOrders | null>(
     null,
   );
+  const { createNotif } = useCreateNotif();
 
-  const [orderStatus, setOrderStatus] = useState('pending');
-
+  const [orderStatus, setOrderStatus] = useState('new');
+  const [reason, setReason] = useState('');
   const fetchOrders = useCallback(async () => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_SERVER_LINK}/orders`);
       console.log(res.data);
 
-      setProductsOrders(res.data);
+      setProductsOrders(
+        res.data.filter((order: ProductOrders) => order.status === 'new'),
+      );
     } catch (error) {
       console.error('Error fetching designs:', error);
     }
@@ -65,18 +71,80 @@ const NewOrders = () => {
 
   const statusColors: Record<ProductOrders['status'], string> = {
     new: 'bg-blue-100 text-blue-500',
-    pending: 'bg-yellow-100 bg-yellow-500',
-    pickup: 'bg-purple-100 bg-purple-500',
-    done: 'bg-green-100 bg-green-500',
-    cancelled: 'bg-red-100 bg-red-500',
+    processing: 'bg-orange-100 text-orange-500',
+    pickup: 'bg-purple-100 text-purple-500',
+    done: 'bg-green-100 text-green-500',
+    cancelled: 'bg-red-100 text-red-500',
+    declined: 'bg-red-100 text-red-500',
   };
 
-  const handleAcceptOrder = () => {
-    setOrderStatus('pending');
+  const handleAcceptOrder = async (order_id: number) => {
+    setOrderStatus('processing');
+
+    try {
+      const res = await axios.put(
+        `${
+          import.meta.env.VITE_SERVER_LINK
+        }/orders/update/order-status/${order_id}`,
+        {
+          status: 'processing',
+        },
+      );
+
+      if (res.data.status === 'success') {
+        createNotif({
+          title: 'Order Accepted',
+          message:
+            'Hello, your order has been accepted and is now being processed.',
+          receiver_id: selectedOrder?.user_id || 0,
+        });
+
+        toast({
+          title: 'Order Accepted',
+          description: 'The order has been successfully accepted.',
+        });
+
+        fetchOrders();
+
+        setSelectedOrder(null);
+      }
+    } catch (error) {
+      console.error('Error fetching designs:', error);
+    }
   };
 
-  const handleDeclineOrder = () => {
-    setOrderStatus('cancelled');
+  const handleDeclineOrder = async (order_id: number) => {
+    try {
+      const res = await axios.put(
+        `${
+          import.meta.env.VITE_SERVER_LINK
+        }/orders/update/order-status/${order_id}`,
+        {
+          status: 'declined',
+        },
+      );
+
+      if (res.data.status === 'success') {
+        createNotif({
+          title: 'Order Declined',
+          message: `Hello, your order has been declined. ${
+            reason ? `Reason: ${reason}` : ''
+          }`,
+          receiver_id: selectedOrder?.user_id || 0,
+        });
+
+        toast({
+          title: 'Order Declined',
+          description: 'The order has been successfully declined.',
+        });
+
+        fetchOrders();
+
+        setSelectedOrder(null);
+      }
+    } catch (error) {
+      console.error('Error fetching designs:', error);
+    }
   };
 
   return (
@@ -476,7 +544,7 @@ const NewOrders = () => {
                   Back to Orders
                 </Button>
 
-                {orderStatus === 'pending' && (
+                {selectedOrder.status === 'new' && (
                   <>
                     {/* Decline Order Alert Dialog */}
                     <AlertDialog>
@@ -520,6 +588,7 @@ const NewOrders = () => {
                                 Reason for declining (optional):
                               </p>
                               <textarea
+                                onChange={(e) => setReason(e.target.value)}
                                 className="w-full mt-1 p-2 border border-gray-300 rounded-md text-sm"
                                 rows={3}
                                 placeholder="Enter reason for declining the order..."
@@ -531,7 +600,9 @@ const NewOrders = () => {
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction
                             className="bg-red-600 hover:bg-red-700 text-white"
-                            onClick={handleDeclineOrder}
+                            onClick={() =>
+                              handleDeclineOrder(selectedOrder.order_id)
+                            }
                           >
                             Decline Order
                           </AlertDialogAction>
@@ -555,7 +626,7 @@ const NewOrders = () => {
                           <AlertDialogDescription>
                             <p className="mb-4">
                               Are you sure you want to accept this order? The
-                              order status will be changed to "pending".
+                              order status will be changed to "processing".
                             </p>
 
                             <div className="bg-green-50 border border-green-200 rounded-md p-3 text-green-800 text-sm">
@@ -568,7 +639,8 @@ const NewOrders = () => {
                                   has been accepted
                                 </li>
                                 <li>
-                                  The order status will be changed to "pending"
+                                  The order status will be changed to
+                                  "processing"
                                 </li>
                               </ul>
                             </div>
@@ -578,7 +650,9 @@ const NewOrders = () => {
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction
                             className="bg-green-600 hover:bg-green-700 text-white"
-                            onClick={handleAcceptOrder}
+                            onClick={() =>
+                              handleAcceptOrder(selectedOrder.order_id)
+                            }
                           >
                             Accept Order
                           </AlertDialogAction>
@@ -586,14 +660,6 @@ const NewOrders = () => {
                       </AlertDialogContent>
                     </AlertDialog>
                   </>
-                )}
-
-                {orderStatus !== 'pending' && (
-                  <Button>
-                    {orderStatus === 'pending'
-                      ? 'Update Status'
-                      : 'View Details'}
-                  </Button>
                 )}
               </CardFooter>
             </Card>

@@ -12,6 +12,7 @@ import axios from 'axios';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { Check, CreditCard, DollarSign, Upload, Wallet, X } from 'lucide-react';
+import useCreateNotif from '@/hooks/useCreateNotif';
 
 interface OrderData {
   fabric: string;
@@ -40,7 +41,7 @@ export function OrderDialogTrigger({
 
   const userID = localStorage.getItem('userID');
   const [isLoading, setIsLoading] = useState(false);
-
+  const { createNotif } = useCreateNotif();
   const [paymentProof, setPaymentProof] = useState<File | null>(null);
   const [uploadStatus, setUploadStatus] = useState<
     'idle' | 'success' | 'error'
@@ -112,7 +113,12 @@ export function OrderDialogTrigger({
       formDataObj.append('shipping_address', formData.address);
       formDataObj.append('phone_number', formData.phone);
       formDataObj.append('status', 'new');
-      formDataObj.append('payment_proof', paymentProof || '');
+
+      if (formData.paymentMethod === 'cash') {
+        formDataObj.append('payment_proof', '');
+      } else {
+        formDataObj.append('payment_proof', paymentProof || '');
+      }
 
       if (blob) {
         formDataObj.append(
@@ -133,19 +139,26 @@ export function OrderDialogTrigger({
       );
 
       if (res.data.status === 'success') {
+        createNotif({
+          title: `New Order from ${formData.fullName}`,
+          message:
+            'You have a new order. Please check the orders page for more details.',
+          receiver_id: 0,
+        });
+
         toast({
           title: 'Order Created',
           description: 'Your order has been placed successfully.',
         });
 
-        setOpen(false);
-        setOrderData(null);
-        setFormData({
-          fullName: '',
-          address: '',
-          phone: '',
-          paymentMethod: 'cash',
-        });
+        // setOpen(false);
+        // setOrderData(null);
+        // setFormData({
+        //   fullName: '',
+        //   address: '',
+        //   phone: '',
+        //   paymentMethod: 'cash',
+        // });
       }
     } catch (error) {
       console.error('Error creating order:', error);
@@ -175,7 +188,7 @@ export function OrderDialogTrigger({
       <DialogTrigger asChild>
         <Button variant="outline">Place Order</Button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl h-[900px] p-2">
+      <DialogContent className="max-w-4xl max-h-[900px] p-2">
         {!showPayment ? (
           <OrderDialog
             onProceedToPayment={(data) => {

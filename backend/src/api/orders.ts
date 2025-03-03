@@ -51,7 +51,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// ✅ Get an order by ID
 router.get('/orders/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
 
@@ -72,6 +71,40 @@ router.get('/orders/:id', async (req: Request, res: Response) => {
     res.status(500).json({ status: 'error', message: 'Failed to fetch order' });
   }
 });
+
+router.put(
+  '/update/order-status/:id',
+  async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!status) {
+      res.status(400).json({ error: 'Missing required fields' });
+      return;
+    }
+
+    try {
+      const connection = await databaseConnectionPromise;
+      const [result]: any = await connection.query(
+        'UPDATE orders SET status = ? WHERE order_id = ?',
+        [status, id], // Correct field mapping
+      );
+
+      if (result.affectedRows === 0) {
+        res.status(404).json({ error: 'Order not found' });
+        return;
+      }
+
+      res.json({
+        message: 'Order status updated successfully',
+        status: 'success',
+      });
+    } catch (err) {
+      console.error('SQL Error:', err);
+      res.status(500).json({ error: 'Failed to update order status' });
+    }
+  },
+);
 
 router.post(
   '/create',
@@ -106,7 +139,7 @@ router.post(
       }`;
     }
 
-    let payment_proof = null;
+    let payment_proof = '';
     if (
       req.files &&
       !Array.isArray(req.files) &&
@@ -149,7 +182,6 @@ router.post(
   },
 );
 
-// ✅ Update an order
 router.put(
   '/update/:id',
   upload.single('tshirtDesignPath'),

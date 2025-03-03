@@ -24,26 +24,8 @@ import {
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
+import { ProductOrders } from '../admin/Orders';
 // Updated product data to include status
-
-interface Product {
-  created_at: string;
-  fabric: string;
-  fullname: string;
-  order_id: number;
-  payment_method: string;
-  phone_number: string;
-  quantity: number;
-  shipping_address: string;
-  size_bust: string;
-  size_shoulder: string;
-  size_waist: string;
-
-  totalPrice: number;
-  tshirtDesignPath: string;
-  user_id: number;
-  status: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
-}
 
 interface SizeChart {
   size: string;
@@ -63,7 +45,7 @@ export default function ProductTable() {
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<ProductOrders[]>([]);
 
   // Calculate pagination
   const totalPages = Math.ceil(products.length / itemsPerPage);
@@ -139,21 +121,21 @@ export default function ProductTable() {
     return fabric ? fabric.price : undefined;
   };
 
+  const statusColors: Record<ProductOrders['status'], string> = {
+    new: 'bg-blue-100 text-blue-500',
+    processing: 'bg-orange-100 text-orange-500',
+    pickup: 'bg-purple-100 text-purple-500',
+    done: 'bg-green-100 text-green-500',
+    cancelled: 'bg-red-100 text-red-500',
+    declined: 'bg-red-100 text-red-500',
+  };
+
   return (
     <div className="w-[80%] space-y-4">
       <div className="rounded-2xl border bg-white overflow-hidden">
         <Table>
           <TableHeader className="bg-gray-50">
             <TableRow>
-              <TableHead className="w-[50px]">
-                <Checkbox
-                  checked={
-                    currentItems.length > 0 &&
-                    selectedItems.length === currentItems.length
-                  }
-                  onCheckedChange={toggleSelectAll}
-                />
-              </TableHead>
               <TableHead>Product</TableHead>
               <TableHead className="text-right">Bust</TableHead>
               <TableHead className="text-right">Waist</TableHead>
@@ -169,13 +151,7 @@ export default function ProductTable() {
           {/* Updated TableBody to include Status and replace dropdown with buttons */}
           <TableBody>
             {currentItems.map((product, index) => (
-              <TableRow className="h-[8rem]" key={index}>
-                <TableCell>
-                  <Checkbox
-                    checked={selectedItems.includes(product.order_id)}
-                    onCheckedChange={() => toggleSelectItem(product.order_id)}
-                  />
-                </TableCell>
+              <TableRow className="h-[4rem]" key={index}>
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <img
@@ -187,7 +163,7 @@ export default function ProductTable() {
                           : '/fallback-image.jpg'
                       }
                       alt={product.fullname || 'Product'}
-                      className="rounded-md border h-full w-32"
+                      className="rounded-md border h-full w-[5rem]"
                     />
                     <span>TSHIRT - {getSizeLabel(product.size_bust)}</span>
                   </div>
@@ -214,15 +190,9 @@ export default function ProductTable() {
                 </TableCell>
                 <TableCell>
                   <span
-                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      product.status === 'Delivered'
-                        ? 'bg-green-100 text-green-800'
-                        : product.status === 'Shipped'
-                        ? 'bg-blue-100 text-blue-800'
-                        : product.status === 'Processing'
-                        ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-gray-100 text-gray-800'
-                    }`}
+                    className={`${
+                      statusColors[product.status]
+                    }  px-3 py-1.5 text-sm font-medium rounded-2xl`}
                   >
                     {product.status}
                   </span>

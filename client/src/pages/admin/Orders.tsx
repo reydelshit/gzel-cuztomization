@@ -54,7 +54,7 @@ export type ProductOrders = {
   totalPrice: number;
   tshirtDesignPath: string;
   user_id: number;
-  status: 'new' | 'pending' | 'pickup' | 'done' | 'cancelled';
+  status: 'new' | 'processing' | 'pickup' | 'done' | 'cancelled' | 'declined';
 };
 
 export default function Orders() {
@@ -120,10 +120,11 @@ export default function Orders() {
 
   const statusColors: Record<ProductOrders['status'], string> = {
     new: 'bg-blue-100 text-blue-500',
-    pending: 'bg-yellow-100 bg-yellow-500',
-    pickup: 'bg-purple-100 bg-purple-500',
-    done: 'bg-green-100 bg-green-500',
-    cancelled: 'bg-red-100 bg-red-500',
+    processing: 'bg-orange-100 text-orange-500',
+    pickup: 'bg-purple-100 text-purple-500',
+    done: 'bg-green-100 text-green-500',
+    cancelled: 'bg-red-100 text-red-500',
+    declined: 'bg-red-100 text-red-500',
   };
 
   return (
@@ -147,11 +148,11 @@ export default function Orders() {
             chartColor="green"
           />
           <OrderCard
-            handleClick={() => handleCLickNavigate('pending')}
-            title="Pending Orders"
+            handleClick={() => handleCLickNavigate('proccessing')}
+            title="Processing Orders"
             count={
               productsOrders.filter(
-                (order) => order.status.toLowerCase() === 'pending',
+                (order) => order.status.toLowerCase() === 'proccessing',
               ).length || 0
             }
             icon={<ClockIcon className="h-6 w-6 text-gray-500" />}
@@ -185,10 +186,12 @@ export default function Orders() {
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Orders</SelectItem>
-                  <SelectItem value="new">New Orders</SelectItem>
-                  <SelectItem value="pending">Pending Orders</SelectItem>
-                  <SelectItem value="delivered">Done Orders</SelectItem>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="new">New</SelectItem>
+                  <SelectItem value="processing">Processing</SelectItem>
+                  <SelectItem value="pickup">Pickup</SelectItem>
+                  <SelectItem value="done">Done</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
                 </SelectContent>
               </Select>
               <Input
@@ -271,18 +274,6 @@ export default function Orders() {
                       </td>
                       <td className="px-4 py-3 text-sm">{order.quantity}</td>
                       <td className="px-4 py-3 text-sm">
-                        {/* <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            order.status.toLowerCase() === 'pending'
-                              ? 'bg-blue-100 text-blue-800'
-                              : order.status.toLowerCase() === 'new'
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : 'bg-green-100 text-green-800'
-                          }`}
-                        >
-                          {order.status}
-                        </span> */}
-
                         <Badge className={statusColors[order.status]}>
                           {order.status}
                         </Badge>
