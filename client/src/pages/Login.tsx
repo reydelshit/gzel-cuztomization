@@ -80,8 +80,8 @@ const Login = () => {
       className="bg-center p-8 w-full min-h-screen h-full flex items-center justify-center flex-col px-[6rem] "
     >
       <div className="w-full text-center flex  justify-center items-center gap-[5rem]">
-        <div className=" bg-[#74AB6E] py-4 px-[3rem] w-[25%] h-[500px] text-center items-center flex flex-col justify-center rounded-xl ">
-          <h1 className="text-white font-bold text-2xl my-4">
+        <div className=" bg-white text-black py-4 px-[3rem] w-[25%] h-[500px] text-center items-center flex flex-col justify-center rounded-3xl ">
+          <h1 className=" font-bold text-2xl my-4">
             Online Apparel Customized Clothing
           </h1>
           <form
@@ -99,11 +99,13 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
               className="h-[4rem] placeholder:text-center placeholder:font-bold border-2   border-black bg-white rounded-xl text-center"
               type="password"
-              placeholder="Username"
+              placeholder="Password"
             />
 
-            <span className="block my-2 self-end text-white cursor-pointer">
-              <Link to="/create">Create Account</Link>
+            <span className="block my-2 self-end  cursor-pointer">
+              <Link className="underline" to="/create">
+                Create Account
+              </Link>
             </span>
 
             {error && (
@@ -113,7 +115,7 @@ const Login = () => {
             )}
             <Button
               type="submit"
-              className="self-center my-4 bg-white text-black  h-[3rem] w-full shadow-md rounded-xl"
+              className="self-center my-4 bg-[#74AB6E] text-black  h-[4rem] w-full shadow-md rounded-xl"
             >
               Login
             </Button>

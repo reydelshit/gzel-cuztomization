@@ -66,11 +66,11 @@ const CreateAccount = () => {
       }}
       className="bg-center p-8 w-full min-h-screen h-full flex items-center justify-center flex-col px-[6rem] "
     >
-      <div className="grid md:grid-cols-2 h-[40%] rounded-xl overflow-hidden">
-        <div className="bg-gray-300 p-8 flex flex-col">
+      <div className="grid md:grid-cols-2 h-[40%] rounded-3xl overflow-hidden">
+        <div className="bg-[#74AB6E] p-8 flex flex-col">
           <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-700">GZEL</h1>
-            <p className="text-gray-600">Digital Design and Printing</p>
+            <h1 className="text-3xl font-bold text-white">GZEL</h1>
+            <p className="text-white">Digital Design and Printing</p>
           </div>
 
           <div className="flex-grow flex items-center justify-center">
@@ -91,15 +91,15 @@ const CreateAccount = () => {
         </div>
 
         {/* Right side - Sign up form */}
-        <div className="bg-[#74AB6E] p-8 flex items-center justify-center">
+        <div className="bg-white p-8 flex items-center justify-center">
           <div className="w-full max-w-md">
-            <h2 className="text-3xl font-bold text-white mb-4">
+            <h2 className="text-3xl font-bold text-black mb-4">
               Create an account
             </h2>
 
-            <div className="text-white mb-6">
+            <div className="text-black mb-6">
               Already have an account?{' '}
-              <Link to="/login" className="text-white font-bold">
+              <Link to="/login" className="text-black font-bold umderline">
                 Login
               </Link>
             </div>
@@ -148,7 +148,7 @@ const CreateAccount = () => {
 
               <Button
                 type="submit"
-                className="w-full bg-white text-green-500 hover:bg-gray-100 mb-6"
+                className="w-full bg-[#74AB6E] text-white h-[3.5rem] hover:bg-gray-100 mb-6"
               >
                 Create account
               </Button>
