@@ -68,12 +68,12 @@ const CaptureHelper = ({
     setExportFunction(() => () => {
       console.log('Exporting 3D design...');
 
-      // Ensure render completes before capturing
       gl.render(scene, camera);
 
-      // Use requestAnimationFrame to ensure it's rendered before capturing
       requestAnimationFrame(() => {
         const dataURL = gl.domElement.toDataURL('image/png');
+
+        console.log('Generated 3D image data URL:', dataURL);
         const link = document.createElement('a');
         link.href = dataURL;
         link.download = 'tshirt-design.png';

@@ -25,8 +25,10 @@ interface OrderData {
   totalPrice: number;
 }
 export function OrderDialogTrigger({
+  switchCanvas,
   canvasRef,
 }: {
+  switchCanvas: boolean;
   canvasRef: React.RefObject<any>;
 }) {
   const [open, setOpen] = useState(false);
@@ -95,9 +97,25 @@ export function OrderDialogTrigger({
         return;
       }
 
-      // Convert canvas to image
-      const dataURL = canvasRef.current?.toDataURL('image/png');
-      const blob = dataURL ? await (await fetch(dataURL)).blob() : null;
+      let blob: Blob | null = null;
+
+      if (switchCanvas) {
+        const canvas = document.querySelector('canvas');
+        if (canvas) {
+          const gl = canvas.getContext('webgl') || canvas.getContext('webgl2');
+          if (gl) {
+            gl.flush();
+            gl.finish();
+          }
+
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+          const dataURL = canvas.toDataURL('image/png');
+          blob = await (await fetch(dataURL)).blob();
+        }
+      } else {
+        const dataURL = canvasRef.current?.toDataURL('image/png');
+        blob = dataURL ? await (await fetch(dataURL)).blob() : null;
+      }
 
       // Create form data
       const formDataObj = new FormData();
@@ -128,9 +146,9 @@ export function OrderDialogTrigger({
         );
       }
 
-      for (const pair of formDataObj.entries()) {
-        console.log(pair[0], pair[1]);
-      }
+      // for (const pair of formDataObj.entries()) {
+      //   console.log(pair[0], pair[1]);
+      // }
 
       const res = await axios.post(
         `${import.meta.env.VITE_SERVER_LINK}/orders/create`,
@@ -151,14 +169,14 @@ export function OrderDialogTrigger({
           description: 'Your order has been placed successfully.',
         });
 
-        // setOpen(false);
-        // setOrderData(null);
-        // setFormData({
-        //   fullName: '',
-        //   address: '',
-        //   phone: '',
-        //   paymentMethod: 'cash',
-        // });
+        setOpen(false);
+        setOrderData(null);
+        setFormData({
+          fullName: '',
+          address: '',
+          phone: '',
+          paymentMethod: 'gcash',
+        });
       }
     } catch (error) {
       console.error('Error creating order:', error);

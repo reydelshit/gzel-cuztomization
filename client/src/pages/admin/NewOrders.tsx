@@ -527,7 +527,7 @@ const NewOrders = () => {
                                       : 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=1000'
                                   }
                                   alt="Payment Proof"
-                                  className="w-full rounded-md"
+                                  className="w-full rounded-md object-contain max-h-[400px]"
                                 />
                               </div>
                             </DialogContent>

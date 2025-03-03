@@ -106,6 +106,13 @@ export function HeaderClient({ clientName, handleLogout }: HeaderClientProps) {
           <PopoverContent className="w-56">
             <div className="flex flex-col space-y-2">
               <Link
+                to="/client"
+                className="flex items-center space-x-2 px-2 py-1 rounded-md hover:bg-gray-100 transition-colors"
+              >
+                <span>Create Design</span>
+              </Link>
+
+              <Link
                 to="/client/saved-designs"
                 className="flex items-center space-x-2 px-2 py-1 rounded-md hover:bg-gray-100 transition-colors"
               >

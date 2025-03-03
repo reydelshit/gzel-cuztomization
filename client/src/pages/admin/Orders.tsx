@@ -145,7 +145,7 @@ export default function Orders() {
         createNotif({
           title: 'Order Completed',
           message:
-            'Hello, your order  has been successfully completed. Thank you for trusting with us!',
+            'Hello, your order has been successfully completed. Thank you for trusting with us!',
           receiver_id: user_id,
         });
 

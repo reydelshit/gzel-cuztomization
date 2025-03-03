@@ -274,6 +274,7 @@ const CreateDesign: React.FC = () => {
   };
 
   const [exportDesign3D, setExportDesign3D] = useState<() => void>(() => {});
+  const [imageData, setImageData] = useState<string | null>(null);
 
   return (
     <div className="flex flex-row-reverse ">
@@ -340,9 +341,11 @@ const CreateDesign: React.FC = () => {
                 </header>
 
                 <div className="flex space-x-4">
-                  {/* place order dialog  */}
                   {userRole === 'client' && (
-                    <OrderDialogTrigger canvasRef={canvasRef} />
+                    <OrderDialogTrigger
+                      switchCanvas={switchCanvas}
+                      canvasRef={canvasRef}
+                    />
                   )}
                 </div>
               </div>
@@ -372,7 +375,10 @@ const CreateDesign: React.FC = () => {
                   {/* place order dialog  */}
 
                   {userRole === 'client' && (
-                    <OrderDialogTrigger canvasRef={canvasRef} />
+                    <OrderDialogTrigger
+                      switchCanvas={switchCanvas}
+                      canvasRef={canvasRef}
+                    />
                   )}
                 </div>
               </div>
