@@ -1,5 +1,3 @@
-import type React from 'react';
-
 import {
   Dialog,
   DialogContent,
@@ -9,16 +7,37 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 
-import { useCallback, useEffect, useState } from 'react';
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronsLeftIcon,
   ChevronsRightIcon,
+  EyeIcon,
   MoreHorizontalIcon,
+  XCircle,
 } from 'lucide-react';
-import { CheckIcon, ClockIcon, FileTextIcon, ListIcon } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -26,19 +45,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Badge } from '@/components/ui/badge';
-import { toast } from '@/hooks/use-toast';
 import useCreateNotif from '@/hooks/useCreateNotif';
+import { toast } from '@/hooks/use-toast';
 
 export type ProductOrders = {
   created_at: string;
@@ -59,12 +69,19 @@ export type ProductOrders = {
   status: 'new' | 'processing' | 'pickup' | 'done' | 'cancelled' | 'declined';
 };
 
-export default function Orders() {
+interface Fabric {
+  id: number;
+  fabricName: string;
+  price: number;
+}
+
+export default function PurchaseTable2() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [filterStatus, setFilterStatus] = useState('all');
   const [productsOrders, setProductsOrders] = useState<ProductOrders[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const userID = parseInt(localStorage.getItem('userID') || '0', 10);
   const { createNotif } = useCreateNotif();
 
   const fetchOrders = useCallback(async () => {
@@ -72,7 +89,9 @@ export default function Orders() {
       const res = await axios.get(`${import.meta.env.VITE_SERVER_LINK}/orders`);
       console.log(res.data);
 
-      setProductsOrders(res.data);
+      setProductsOrders(
+        res.data.filter((order: ProductOrders) => order.user_id === userID),
+      );
     } catch (error) {
       console.error('Error fetching designs:', error);
     }
@@ -113,7 +132,7 @@ export default function Orders() {
   const handleCLickNavigate = (type: string) => {
     const routes: Record<string, string> = {
       new: '/orders/new',
-      processing: '/orders/processing',
+      pending: '/orders/pending',
     };
 
     if (routes[type]) {
@@ -130,28 +149,41 @@ export default function Orders() {
     declined: 'bg-red-100 text-red-500',
   };
 
-  const handleOrderCompleted = async (order_id: number, user_id: number) => {
+  const ListFabric: Fabric[] = [
+    { id: 0, fabricName: 'Polyester', price: 300 },
+    { id: 1, fabricName: 'Cotton', price: 350 },
+    { id: 2, fabricName: 'Linen', price: 400 },
+    { id: 3, fabricName: 'Silk', price: 600 },
+  ];
+
+  const getUnitPrice = (fabricName: string): number | undefined => {
+    const fabric = ListFabric.find((f) => f.fabricName === fabricName);
+    return fabric ? fabric.price : undefined;
+  };
+
+  const handleCancelOrder = async (order_id: number) => {
     try {
       const res = await axios.put(
         `${
           import.meta.env.VITE_SERVER_LINK
         }/orders/update/order-status/${order_id}`,
         {
-          status: 'done',
+          status: 'cancelled',
         },
       );
 
       if (res.data.status === 'success') {
         createNotif({
-          title: 'Order Completed',
-          message:
-            'Hello, your order  has been successfully completed. Thank you for trusting with us!',
-          receiver_id: user_id,
+          title: 'Order Cancelled',
+          message: `
+                Customer with user ID${userID} has cancelled their order with order ID ${order_id}.
+            `,
+          receiver_id: 0,
         });
 
         toast({
-          title: 'Order Marked as Done',
-          description: 'Your order has been successfully marked as done!',
+          title: 'Order Cancelled',
+          description: 'The order has been successfully cancelled.',
         });
 
         fetchOrders();
@@ -165,55 +197,13 @@ export default function Orders() {
     <div className="rounded-lg shadow h-screen">
       <header className="flex h-[4rem] items-center justify-between px-6">
         <h1 className="text-2xl font-bold text-black uppercase italic">
-          ORDers
+          your purchases
         </h1>
       </header>
       <div className="w-full flex flex-col justify-center items-center p-6 gap-8">
-        <div className="flex flex-row gap-4 w-full">
-          <OrderCard
-            handleClick={() => handleCLickNavigate('new')}
-            title="New Orders"
-            count={
-              productsOrders.filter(
-                (order) => order.status.toLowerCase() === 'new',
-              ).length || 0
-            }
-            icon={<FileTextIcon className="h-6 w-6 text-gray-500" />}
-            chartColor="green"
-          />
-          <OrderCard
-            handleClick={() => handleCLickNavigate('processing')}
-            title="Processing Orders"
-            count={
-              productsOrders.filter(
-                (order) => order.status.toLowerCase() === 'processing',
-              ).length || 0
-            }
-            icon={<ClockIcon className="h-6 w-6 text-gray-500" />}
-            chartColor="green"
-          />
-          <OrderCard
-            handleClick={() => handleCLickNavigate('')}
-            title="Done Orders"
-            count={
-              productsOrders.filter(
-                (order) => order.status.toLowerCase() === 'done',
-              ).length || 0
-            }
-            icon={<CheckIcon className="h-6 w-6 text-gray-500" />}
-            chartColor="green"
-          />
-          <OrderCard
-            handleClick={() => handleCLickNavigate('')}
-            title="Total Orders"
-            count={productsOrders.length || 0}
-            icon={<ListIcon className="h-6 w-6 text-gray-500" />}
-            chartColor="green"
-          />
-        </div>
         <div className="w-full bg-white rounded-lg shadow h-full">
           <div className="p-4 flex justify-between items-center border-b">
-            <h2 className="text-lg font-semibold">List of Orders</h2>
+            <h2 className="text-lg font-semibold">List of your Orders</h2>
             <div className="flex items-center gap-2">
               <Select value={filterStatus} onValueChange={handleFilterChange}>
                 <SelectTrigger className="w-[180px]">
@@ -246,7 +236,7 @@ export default function Orders() {
                     Order ID
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">
-                    Customer
+                    Product
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">
                     Size (B/W/S)
@@ -254,8 +244,13 @@ export default function Orders() {
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">
                     Fabric
                   </th>
+
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">
-                    Price
+                    Unit Price
+                  </th>
+
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">
+                    Total Price
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">
                     Qty
@@ -293,9 +288,18 @@ export default function Orders() {
                     >
                       <td className="px-4 py-3 text-sm">#{order.order_id}</td>
                       <td className="px-4 py-3 text-sm">
-                        <div className="font-medium">{order.fullname}</div>
-                        <div className="text-xs text-gray-500">
-                          {order.phone_number}
+                        <div className="font-medium">
+                          <img
+                            src={
+                              order.tshirtDesignPath
+                                ? `${import.meta.env.VITE_SERVER_LINK}/${
+                                    order.tshirtDesignPath
+                                  }`
+                                : '/fallback-image.jpg'
+                            }
+                            alt="T-shirt Design"
+                            className="max-h-[80px] object-contain rounded-md "
+                          />
                         </div>
                       </td>
                       <td className="px-4 py-3 text-sm">
@@ -303,6 +307,10 @@ export default function Orders() {
                         {order.size_shoulder}
                       </td>
                       <td className="px-4 py-3 text-sm">{order.fabric}</td>
+                      <td className="px-4 py-3 text-sm">
+                        ₱{getUnitPrice(order.fabric)?.toFixed(2)}
+                      </td>
+
                       <td className="px-4 py-3 text-sm">
                         ₱{order.totalPrice.toFixed(2)}
                       </td>
@@ -371,12 +379,13 @@ export default function Orders() {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                               <Dialog>
-                                <DialogTrigger>
+                                <DialogTrigger asChild>
                                   <Button
-                                    variant="ghost"
-                                    className="w-full justify-start px-2 text-sm"
+                                    className="border-none"
+                                    variant={'outline'}
+                                    size="sm"
                                   >
-                                    View Design
+                                    <EyeIcon /> View Design
                                   </Button>
                                 </DialogTrigger>
                                 <DialogContent className="max-w-[1200px]">
@@ -407,15 +416,63 @@ export default function Orders() {
                               </Dialog>
 
                               <DropdownMenuItem
-                                className="cursor-pointer"
-                                onClick={() =>
-                                  handleOrderCompleted(
-                                    order.order_id,
-                                    order.user_id,
-                                  )
-                                }
+                                onSelect={(event) => event.preventDefault()}
                               >
-                                Mark as Done
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button
+                                      disabled={order.status !== 'new'}
+                                      className="border-none"
+                                      variant={'outline'}
+                                      size="sm"
+                                    >
+                                      <XCircle /> Cancel Order
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>
+                                        Cancelling Order
+                                      </AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        <p className="mb-4">
+                                          Are you sure you want to cancel this
+                                          order? This action cannot be undone.
+                                        </p>
+
+                                        {(order.payment_method === 'gcash' ||
+                                          order.payment_method ===
+                                            'paypal') && (
+                                          <div className="bg-amber-50 border border-amber-200 rounded-md p-3 text-amber-800 text-sm mb-4">
+                                            <p className="font-medium mb-1">
+                                              Important Note:
+                                            </p>
+                                            <p>
+                                              Since this order was paid via{' '}
+                                              {order.payment_method}, the
+                                              payment will be automatically
+                                              refunded to your account within
+                                              3-5 business days.
+                                            </p>
+                                          </div>
+                                        )}
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>
+                                        Cancel
+                                      </AlertDialogCancel>
+                                      <AlertDialogAction
+                                        className="bg-red-600 hover:bg-red-700 text-white"
+                                        onClick={() =>
+                                          handleCancelOrder(order.order_id)
+                                        }
+                                      >
+                                        Cancel Order
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -517,45 +574,6 @@ export default function Orders() {
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
-
-export function OrderCard({
-  handleClick,
-  title,
-  count,
-  icon,
-  chartColor,
-}: {
-  handleClick: () => void;
-  title: string;
-  count: number;
-  icon: React.ReactNode;
-  chartColor: string;
-}) {
-  return (
-    <div
-      onClick={handleClick}
-      className="bg-white rounded-lg shadow p-4 flex justify-between items-center w-full cursor-pointer"
-    >
-      <div className="flex items-center gap-3">
-        <div className="p-2 border rounded-md">{icon}</div>
-        <div>
-          <p className="text-sm text-gray-500">{title}</p>
-          <p className="text-2xl font-semibold">{count.toLocaleString()}</p>
-        </div>
-      </div>
-      <div className="h-12 w-16">
-        <svg viewBox="0 0 100 50" className="h-full w-full">
-          <path
-            d="M0,50 L20,35 L40,40 L60,20 L80,30 L100,10"
-            fill="none"
-            stroke={chartColor === 'green' ? '#22c55e' : '#3b82f6'}
-            strokeWidth="2"
-          />
-        </svg>
       </div>
     </div>
   );

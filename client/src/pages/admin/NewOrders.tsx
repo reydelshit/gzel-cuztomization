@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { CheckCircle, FileTextIcon, XCircle } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { OrderCard, ProductOrders } from '../admin/Orders';
+import { OrderCard, ProductOrders } from './Orders';
 import {
   AlertDialog,
   AlertDialogAction,
