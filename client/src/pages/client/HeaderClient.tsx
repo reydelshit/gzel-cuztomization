@@ -63,6 +63,13 @@ export function HeaderClient({ clientName, handleLogout }: HeaderClientProps) {
               >
                 <span>Saved Designs</span>
               </Link>
+
+              <Link
+                to="/client/purchases"
+                className="flex items-center space-x-2 px-2 py-1 rounded-md hover:bg-gray-100 transition-colors"
+              >
+                <span>Purchases</span>
+              </Link>
               <Separator />
               <button
                 onClick={handleLogout}

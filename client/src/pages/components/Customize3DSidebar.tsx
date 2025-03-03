@@ -1,4 +1,4 @@
-import { Download, ImagePlus, Palette } from 'lucide-react';
+import { Download, Eye, ImagePlus, Palette } from 'lucide-react';
 import type * as React from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -25,6 +25,11 @@ export function Customize3DSidebar({
         <CardTitle className="text-lg font-medium">Design Tools</CardTitle>
       </CardHeader>
       <CardContent className="p-4 space-y-4">
+        <Button variant="default" size="sm" className="w-full">
+          <Eye className="mr-2 h-4 w-4" />
+          Preview Design
+        </Button>
+
         {/* Image Upload */}
         <div className="space-y-2">
           <Label htmlFor="image-upload" className="text-sm font-medium">

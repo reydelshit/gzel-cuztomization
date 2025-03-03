@@ -341,7 +341,9 @@ const CreateDesign: React.FC = () => {
 
                 <div className="flex space-x-4">
                   {/* place order dialog  */}
-                  {userRole === 'client' && <OrderDialogTrigger />}
+                  {userRole === 'client' && (
+                    <OrderDialogTrigger canvasRef={canvasRef} />
+                  )}
                 </div>
               </div>
               <ThreeDCanvas
@@ -368,7 +370,10 @@ const CreateDesign: React.FC = () => {
                   />
 
                   {/* place order dialog  */}
-                  {userRole === 'client' && <OrderDialogTrigger />}
+
+                  {userRole === 'client' && (
+                    <OrderDialogTrigger canvasRef={canvasRef} />
+                  )}
                 </div>
               </div>
 

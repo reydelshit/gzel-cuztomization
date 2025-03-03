@@ -3,10 +3,11 @@ import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { useState } from 'react';
 import OrderDialog from './OrderDialog';
 
-import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { toast } from '@/hooks/use-toast';
+import axios from 'axios';
 interface OrderData {
   fabric: string;
   quantity: number;
@@ -17,7 +18,11 @@ interface OrderData {
   };
   totalPrice: number;
 }
-export function OrderDialogTrigger() {
+export function OrderDialogTrigger({
+  canvasRef,
+}: {
+  canvasRef: React.RefObject<any>;
+}) {
   const [open, setOpen] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
   const [orderData, setOrderData] = useState<OrderData | null>(null);
@@ -28,18 +33,83 @@ export function OrderDialogTrigger() {
     paymentMethod: 'cash',
   });
 
+  const userID = localStorage.getItem('userID');
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleCreateOrder = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Define the onSubmit function here
-    const onSubmit = (data: typeof formData) => {
-      console.log('Form submitted:', data);
-      // Add your form submission logic here
-    };
-    onSubmit(formData);
+    try {
+      if (!orderData) {
+        console.error('Order data is missing.');
+        return;
+      }
+
+      // Convert canvas to image
+      const dataURL = canvasRef.current?.toDataURL('image/png');
+      const blob = dataURL ? await (await fetch(dataURL)).blob() : null;
+
+      // Create form data
+      const formDataObj = new FormData();
+      formDataObj.append('size_bust', orderData.measurements.bust);
+      formDataObj.append('size_waist', orderData.measurements.waist);
+      formDataObj.append('size_shoulder', orderData.measurements.shoulder);
+      formDataObj.append('fabric', orderData.fabric);
+      formDataObj.append('totalPrice', orderData.totalPrice.toString());
+      formDataObj.append('quantity', orderData.quantity.toString());
+      formDataObj.append('payment_method', formData.paymentMethod);
+      formDataObj.append('user_id', userID || '0');
+      formDataObj.append('fullname', formData.fullName);
+      formDataObj.append('shipping_address', formData.address);
+      formDataObj.append('phone_number', formData.phone);
+      formDataObj.append('status', 'processing');
+
+      if (blob) {
+        formDataObj.append(
+          'tshirtDesignPath',
+          blob,
+          `${formData.fullName || 'custom-tshirt'}.png`,
+        );
+      }
+
+      for (const pair of formDataObj.entries()) {
+        console.log(pair[0], pair[1]);
+      }
+
+      const res = await axios.post(
+        `${import.meta.env.VITE_SERVER_LINK}/orders/create`,
+        formDataObj,
+        { headers: { 'Content-Type': 'multipart/form-data' } },
+      );
+
+      if (res.data.status === 'success') {
+        toast({
+          title: 'Order Created',
+          description: 'Your order has been placed successfully.',
+        });
+
+        // setOpen(false);
+        setOrderData(null);
+        setFormData({
+          fullName: '',
+          address: '',
+          phone: '',
+          paymentMethod: 'cash',
+        });
+      }
+    } catch (error) {
+      console.error('Error creating order:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to create order. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -80,7 +150,7 @@ export function OrderDialogTrigger() {
               )}
 
               <h2 className="text-xl font-semibold mb-4">Payment Details</h2>
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleCreateOrder} className="space-y-4">
                 <div>
                   <Label htmlFor="fullName">Full Name</Label>
                   <Input

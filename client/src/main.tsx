@@ -15,6 +15,7 @@ import AdminRoot from './root/AdminRoot.tsx';
 import SavedDesigns from './pages/admin/SavedDesigns.tsx';
 import ClientRoot from './root/CustomerRoot.tsx';
 import SuggestionPage from './pages/client/SuggestionPage.tsx';
+import Purchases from './pages/client/Purchases.tsx';
 
 const router = createBrowserRouter([
   {
@@ -59,6 +60,11 @@ const router = createBrowserRouter([
       {
         path: 'suggestions',
         element: <SuggestionPage />,
+      },
+
+      {
+        path: 'purchases',
+        element: <Purchases />,
       },
 
       {
