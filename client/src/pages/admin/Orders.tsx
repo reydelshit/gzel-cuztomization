@@ -50,7 +50,7 @@ interface ProductOrders {
   size_bust: string;
   size_shoulder: string;
   size_waist: string;
-
+  payment_proof: string;
   totalPrice: number;
   tshirtDesignPath: string;
   user_id: number;
@@ -204,6 +204,14 @@ export default function Orders() {
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">
                     Date
                   </th>
+
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">
+                    Payment Method
+                  </th>
+
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">
+                    Proof of Payment
+                  </th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">
                     Actions
                   </th>
@@ -240,9 +248,9 @@ export default function Orders() {
                       <td className="px-4 py-3 text-sm">
                         <span
                           className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            order.status === 'Processing'
+                            order.status === 'processing'
                               ? 'bg-blue-100 text-blue-800'
-                              : order.status === 'Pending'
+                              : order.status === 'pending'
                               ? 'bg-yellow-100 text-yellow-800'
                               : 'bg-green-100 text-green-800'
                           }`}
@@ -253,6 +261,49 @@ export default function Orders() {
                       <td className="px-4 py-3 text-sm">
                         {new Date(order.created_at).toLocaleDateString()}
                       </td>
+
+                      <td className="px-4 py-3 text-sm">
+                        {order.payment_method}
+                      </td>
+
+                      <td className="px-4 py-3 text-sm">
+                        {order.payment_method === 'cash' ? (
+                          'N/A'
+                        ) : (
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <span className="text-blue-500 cursor-pointer underline">
+                                view
+                              </span>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-[1200px]">
+                              <DialogHeader>
+                                <DialogTitle>Design Preview</DialogTitle>
+                                <DialogDescription>
+                                  {order.payment_proof ? (
+                                    <div className="mt-4 flex justify-center">
+                                      <img
+                                        src={
+                                          order.payment_proof
+                                            ? `${
+                                                import.meta.env.VITE_SERVER_LINK
+                                              }/${order.payment_proof}`
+                                            : '/fallback-image.jpg'
+                                        }
+                                        alt="T-shirt Design"
+                                        className="max-h-[700px] object-contain rounded-md "
+                                      />
+                                    </div>
+                                  ) : (
+                                    <p>No design image available</p>
+                                  )}
+                                </DialogDescription>
+                              </DialogHeader>
+                            </DialogContent>
+                          </Dialog>
+                        )}
+                      </td>
+
                       <td className="px-4 py-3 text-sm">
                         <div className="flex items-center gap-2">
                           {/* <Button variant="ghost" size="icon" title="Delete">

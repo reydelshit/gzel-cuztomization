@@ -6,12 +6,31 @@ import { databaseConnectionPromise } from '../connections/DBConnection';
 
 const router = Router();
 
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     const uploadPath = path.join(__dirname, '../uploads/orders');
+//     if (!fs.existsSync(uploadPath)) {
+//       fs.mkdirSync(uploadPath, { recursive: true });
+//     }
+//     cb(null, uploadPath);
+//   },
+//   filename: (req, file, cb) => {
+//     cb(null, `${Date.now()}-${file.originalname}`);
+//   },
+// });
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadPath = path.join(__dirname, '../uploads/orders');
+    let uploadPath = path.join(__dirname, '../uploads/orders');
+
+    if (file.fieldname === 'payment_proof') {
+      uploadPath = path.join(__dirname, '../uploads/payment_proof');
+    }
+
     if (!fs.existsSync(uploadPath)) {
       fs.mkdirSync(uploadPath, { recursive: true });
     }
+
     cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
@@ -54,10 +73,12 @@ router.get('/orders/:id', async (req: Request, res: Response) => {
   }
 });
 
-// ✅ Create a new order
 router.post(
   '/create',
-  upload.single('tshirtDesignPath'),
+  upload.fields([
+    { name: 'tshirtDesignPath', maxCount: 1 },
+    { name: 'payment_proof', maxCount: 1 },
+  ]),
   async (req: Request, res: Response) => {
     const {
       size_bust,
@@ -73,34 +94,33 @@ router.post(
       phone_number,
       status,
     } = req.body;
-    const tshirtDesignPath = req.file
-      ? `uploads/orders/${req.file.filename}`
-      : null;
 
+    let tshirtDesignPath = null;
     if (
-      !size_bust ||
-      !size_waist ||
-      !size_shoulder ||
-      !fabric ||
-      !totalPrice ||
-      !quantity ||
-      !payment_method ||
-      !user_id ||
-      !fullname ||
-      !shipping_address ||
-      !phone_number ||
-      !status
+      req.files &&
+      !Array.isArray(req.files) &&
+      'tshirtDesignPath' in req.files
     ) {
-      res
-        .status(400)
-        .json({ status: 'error', message: 'Missing required fields' });
-      return;
+      tshirtDesignPath = `uploads/orders/${
+        (req.files['tshirtDesignPath'] as Express.Multer.File[])[0].filename
+      }`;
+    }
+
+    let payment_proof = null;
+    if (
+      req.files &&
+      !Array.isArray(req.files) &&
+      'payment_proof' in req.files
+    ) {
+      payment_proof = `uploads/payment_proof/${
+        (req.files['payment_proof'] as Express.Multer.File[])[0].filename
+      }`;
     }
 
     try {
       const db = await databaseConnectionPromise;
       const [result]: any = await db.query(
-        `INSERT INTO orders (size_bust, size_waist, size_shoulder, fabric, totalPrice, quantity, payment_method, user_id, created_at, tshirtDesignPath, status, fullname, shipping_address, phone_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?)`,
+        `INSERT INTO orders (size_bust, size_waist, size_shoulder, fabric, totalPrice, quantity, payment_method, user_id, created_at, tshirtDesignPath, payment_proof, status, fullname, shipping_address, phone_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?)`,
         [
           size_bust,
           size_waist,
@@ -111,6 +131,7 @@ router.post(
           payment_method,
           user_id,
           tshirtDesignPath,
+          payment_proof,
           status,
           fullname,
           shipping_address,
