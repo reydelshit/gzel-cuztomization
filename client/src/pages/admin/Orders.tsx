@@ -1,5 +1,3 @@
-'use client';
-
 import type React from 'react';
 
 import {
@@ -37,8 +35,10 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
 
-interface ProductOrders {
+export type ProductOrders = {
   created_at: string;
   fabric: string;
   fullname: string;
@@ -54,8 +54,8 @@ interface ProductOrders {
   totalPrice: number;
   tshirtDesignPath: string;
   user_id: number;
-  status: 'Processing' | 'Pending' | 'Shipped' | 'Delivered' | 'Cancelled';
-}
+  status: 'new' | 'pending' | 'pickup' | 'done' | 'cancelled';
+};
 
 export default function Orders() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -105,6 +105,27 @@ export default function Orders() {
     setCurrentPage(1);
   };
 
+  const navigate = useNavigate();
+
+  const handleCLickNavigate = (type: string) => {
+    const routes: Record<string, string> = {
+      new: '/orders/new',
+      pending: '/orders/pending',
+    };
+
+    if (routes[type]) {
+      navigate(routes[type]);
+    }
+  };
+
+  const statusColors: Record<ProductOrders['status'], string> = {
+    new: 'bg-blue-100 text-blue-500',
+    pending: 'bg-yellow-100 bg-yellow-500',
+    pickup: 'bg-purple-100 bg-purple-500',
+    done: 'bg-green-100 bg-green-500',
+    cancelled: 'bg-red-100 bg-red-500',
+  };
+
   return (
     <div className="rounded-lg shadow h-screen">
       <header className="flex h-[4rem] items-center justify-between px-6">
@@ -115,16 +136,18 @@ export default function Orders() {
       <div className="w-full flex flex-col justify-center items-center p-6 gap-8">
         <div className="flex flex-row gap-4 w-full">
           <OrderCard
+            handleClick={() => handleCLickNavigate('new')}
             title="New Orders"
             count={
               productsOrders.filter(
-                (order) => order.status.toLowerCase() === 'processing',
+                (order) => order.status.toLowerCase() === 'new',
               ).length || 0
             }
             icon={<FileTextIcon className="h-6 w-6 text-gray-500" />}
             chartColor="green"
           />
           <OrderCard
+            handleClick={() => handleCLickNavigate('pending')}
             title="Pending Orders"
             count={
               productsOrders.filter(
@@ -135,6 +158,7 @@ export default function Orders() {
             chartColor="green"
           />
           <OrderCard
+            handleClick={() => handleCLickNavigate('')}
             title="Done Orders"
             count={
               productsOrders.filter(
@@ -145,6 +169,7 @@ export default function Orders() {
             chartColor="green"
           />
           <OrderCard
+            handleClick={() => handleCLickNavigate('')}
             title="Total Orders"
             count={productsOrders.length || 0}
             icon={<ListIcon className="h-6 w-6 text-gray-500" />}
@@ -246,17 +271,21 @@ export default function Orders() {
                       </td>
                       <td className="px-4 py-3 text-sm">{order.quantity}</td>
                       <td className="px-4 py-3 text-sm">
-                        <span
+                        {/* <span
                           className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            order.status === 'processing'
+                            order.status.toLowerCase() === 'pending'
                               ? 'bg-blue-100 text-blue-800'
-                              : order.status === 'pending'
+                              : order.status.toLowerCase() === 'new'
                               ? 'bg-yellow-100 text-yellow-800'
                               : 'bg-green-100 text-green-800'
                           }`}
                         >
                           {order.status}
-                        </span>
+                        </span> */}
+
+                        <Badge className={statusColors[order.status]}>
+                          {order.status}
+                        </Badge>
                       </td>
                       <td className="px-4 py-3 text-sm">
                         {new Date(order.created_at).toLocaleDateString()}
@@ -459,19 +488,24 @@ export default function Orders() {
   );
 }
 
-function OrderCard({
+export function OrderCard({
+  handleClick,
   title,
   count,
   icon,
   chartColor,
 }: {
+  handleClick: () => void;
   title: string;
   count: number;
   icon: React.ReactNode;
   chartColor: string;
 }) {
   return (
-    <div className="bg-white rounded-lg shadow p-4 flex justify-between items-center w-full">
+    <div
+      onClick={handleClick}
+      className="bg-white rounded-lg shadow p-4 flex justify-between items-center w-full cursor-pointer"
+    >
       <div className="flex items-center gap-3">
         <div className="p-2 border rounded-md">{icon}</div>
         <div>

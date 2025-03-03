@@ -16,6 +16,8 @@ import SavedDesigns from './pages/admin/SavedDesigns.tsx';
 import ClientRoot from './root/CustomerRoot.tsx';
 import SuggestionPage from './pages/client/SuggestionPage.tsx';
 import Purchases from './pages/client/Purchases.tsx';
+import NewOrders from './pages/client/NewOrders.tsx';
+import PendingOrders from './pages/client/PendingOrders.tsx';
 
 const router = createBrowserRouter([
   {
@@ -30,6 +32,16 @@ const router = createBrowserRouter([
       {
         path: 'orders',
         element: <Orders />,
+      },
+
+      {
+        path: 'orders/new',
+        element: <NewOrders />,
+      },
+
+      {
+        path: 'orders/pending',
+        element: <PendingOrders />,
       },
 
       {

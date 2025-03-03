@@ -111,7 +111,7 @@ export function OrderDialogTrigger({
       formDataObj.append('fullname', formData.fullName);
       formDataObj.append('shipping_address', formData.address);
       formDataObj.append('phone_number', formData.phone);
-      formDataObj.append('status', 'processing');
+      formDataObj.append('status', 'new');
       formDataObj.append('payment_proof', paymentProof || '');
 
       if (blob) {
