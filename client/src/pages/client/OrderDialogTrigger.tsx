@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import OrderDialog from './OrderDialog';
 
 import { Input } from '@/components/ui/input';
@@ -40,6 +40,8 @@ export function OrderDialogTrigger({
     phone: '',
     paymentMethod: 'gcash',
   });
+
+  const [storeBlob, setStoreBlob] = useState<Blob | null>(null);
 
   const userID = localStorage.getItem('userID');
   const [isLoading, setIsLoading] = useState(false);
@@ -210,6 +212,35 @@ export function OrderDialogTrigger({
         {!showPayment ? (
           <OrderDialog
             onProceedToPayment={(data) => {
+              const generateBlob = async () => {
+                let blob: Blob | null = null;
+
+                if (switchCanvas) {
+                  const canvas = document.querySelector('canvas');
+                  if (canvas) {
+                    const gl =
+                      canvas.getContext('webgl') || canvas.getContext('webgl2');
+                    if (gl) {
+                      gl.flush();
+                      gl.finish();
+                    }
+
+                    await new Promise((resolve) =>
+                      requestAnimationFrame(resolve),
+                    );
+                    const dataURL = canvas.toDataURL('image/png');
+                    blob = await (await fetch(dataURL)).blob();
+                  }
+                } else if (canvasRef.current) {
+                  const dataURL = canvasRef.current.toDataURL('image/png');
+                  blob = dataURL ? await (await fetch(dataURL)).blob() : null;
+                }
+
+                setStoreBlob(blob);
+              };
+
+              generateBlob();
+
               setOrderData(data);
               setShowPayment(true);
             }}
@@ -264,6 +295,13 @@ export function OrderDialogTrigger({
                     </div>
                   </div>
                 )}
+                <Separator className="my-6" />
+
+                <img
+                  className="w-full h-96 object-cover rounded-lg"
+                  src={storeBlob ? URL.createObjectURL(storeBlob) : undefined}
+                  alt="order product"
+                />
               </div>
 
               {/* Payment Form */}

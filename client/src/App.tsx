@@ -19,20 +19,21 @@ function App() {
   const [showSidebar, setShowSidebar] = useState(true);
 
   return (
-    <div className="bg-[#D9D9D9] bg-center w-full min-h-screen flex flex-col">
+    <div className="bg-[#D9D9D9] min-h-screen w-full flex flex-col">
       <HeaderAdmin
         handleLogout={handleLogout}
         showSidebar={showSidebar}
         setShowSidebar={setShowSidebar}
       />
 
-      <div className="flex w-full">
+      <div className="flex w-full flex-grow border-2">
         {showSidebar && <SidebarAdmin />}
 
-        <main className="flex-grow min-h-screen">
+        {/* Ensure Outlet takes full space */}
+        <main className="flex-grow w-full min-h-screen">
           {path === '/' ? (
-            <div className="min-h-screen ">
-              <div className=" py-16">
+            <div className="min-h-screen flex flex-col">
+              <div className="py-16">
                 <div className="mx-auto max-w-7xl px-6 lg:px-8">
                   <div className="mx-auto max-w-2xl text-center">
                     <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
@@ -51,7 +52,9 @@ function App() {
               </main>
             </div>
           ) : (
-            <Outlet />
+            <div className="w-full h-full flex-grow bg-[#D9D9D9]">
+              <Outlet />
+            </div>
           )}
         </main>
       </div>

@@ -83,12 +83,6 @@ path:hover {
   transition: all 0.3s;
 }
 
-/* body {
-  color: #fff6f2;
-} */
-
-
-
 @layer base {
   * {
     @apply border-border outline-ring/50;

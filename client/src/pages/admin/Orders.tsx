@@ -120,7 +120,6 @@ export default function Orders() {
       navigate(routes[type]);
     }
   };
-
   const statusColors: Record<ProductOrders['status'], string> = {
     new: 'bg-blue-100 text-blue-500',
     processing: 'bg-orange-100 text-orange-500',
@@ -162,7 +161,7 @@ export default function Orders() {
   };
 
   return (
-    <div className="rounded-lg shadow h-screen">
+    <div className="rounded-lg shadow ">
       <header className="flex h-[4rem] items-center justify-between px-6">
         <h1 className="text-2xl font-bold text-black uppercase italic">
           ORDers
