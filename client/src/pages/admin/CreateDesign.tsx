@@ -5,7 +5,7 @@ import pattern1 from '@/assets/pattern1.avif';
 // import pattern2 from '@/assets/pattern2.avif';
 
 import { Button } from '@/components/ui/button';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { OrderDialogTrigger } from '../client/OrderDialogTrigger';
 import Customize2DSideBar from '../components/Customize2DSideBar';
@@ -13,6 +13,7 @@ import { Customize3DSidebar } from '../components/Customize3DSidebar';
 import { SaveDesignDialog } from '../components/DialogSaveDesign2D';
 import TShirtSelection from '../components/TShirtSelection';
 import ThreeDCanvas, { DEFAULT_TEXTURE } from './3DCanvas';
+import { Eye, SwitchCamera } from 'lucide-react';
 
 const patterns = [
   { name: 'Stripes', src: pattern1 },
@@ -32,6 +33,7 @@ const CreateDesign: React.FC = () => {
   const savedCanvasDataRef = useRef<string | null>(null);
   const [switchCanvas, setSwitchCanvas] = useState(false);
   const [isForUpdate, setIsForUpdate] = useState(false);
+  const navigate = useNavigate();
 
   const location = useLocation();
   const params = new URLSearchParams(location.search);
@@ -274,14 +276,13 @@ const CreateDesign: React.FC = () => {
   };
 
   const [exportDesign3D, setExportDesign3D] = useState<() => void>(() => {});
-  const [imageData, setImageData] = useState<string | null>(null);
 
   return (
     <div className="flex flex-row-reverse ">
       {selectedTShirt ? (
         <>
           {' '}
-          <div>
+          <div className="  w-56">
             <Button
               onClick={() => {
                 if (!switchCanvas && canvasRef.current) {
@@ -301,9 +302,26 @@ const CreateDesign: React.FC = () => {
                   }
                 }, 100);
               }}
-              className="my-2 w-full"
+              className="my-2  w-56"
             >
+              <SwitchCamera className="mr-2 h-4 w-4" />{' '}
               {switchCanvas ? 'Switch to 2D' : 'Switch to 3D'}
+            </Button>
+
+            <Button
+              onClick={() => {
+                if (userRole === 'client') {
+                  navigate('/client/preview-design');
+                } else {
+                  navigate('/preview-design');
+                }
+              }}
+              variant="default"
+              size="sm"
+              className="mb-2 w-56"
+            >
+              <Eye className="mr-2 h-4 w-4" />
+              Preview Design
             </Button>
 
             {switchCanvas ? (
@@ -332,7 +350,7 @@ const CreateDesign: React.FC = () => {
             )}
           </div>
           {switchCanvas ? (
-            <div className="flex justify-center items-center h-screen w-full relative">
+            <div className="flex justify-center items-center w-full relative">
               <div className="absolute top-5 left-5 z-40 flex flex-col space-y-4">
                 <header className="flex items-center justify-between">
                   <h1 className="text-2xl font-bold text-black uppercase italic">
@@ -356,7 +374,7 @@ const CreateDesign: React.FC = () => {
               />
             </div>
           ) : (
-            <div className="h-screen flex justify-center items-center flex-col w-full relative">
+            <div className="h-screen flex justify-center items-center flex-col w-full relative ">
               <div className="absolute top-5 left-5 z-40 flex flex-col space-y-4">
                 <header className="flex items-center justify-between">
                   <h1 className="text-2xl font-bold text-black uppercase italic">

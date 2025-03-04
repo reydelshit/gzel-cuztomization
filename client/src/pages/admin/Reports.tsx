@@ -41,15 +41,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 
-import { MoreHorizontalIcon } from 'lucide-react';
-
 import { Badge } from '@/components/ui/badge';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 
 const Reports = () => {
   const [currentPage, setCurrentPage] = useState(1);

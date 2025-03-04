@@ -25,7 +25,7 @@ const ClientRoot = () => {
   if (!isAuthenticated) return null;
 
   return (
-    <div className="bg-[#D9D9D9]">
+    <div className="bg-[#D9D9D9] flex-grow w-full min-h-screen">
       <HeaderClient clientName={clientName} handleLogout={handleLogout} />
 
       {location.pathname === '/client' && (

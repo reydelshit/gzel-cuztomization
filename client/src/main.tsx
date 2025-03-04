@@ -18,6 +18,7 @@ import SuggestionPage from './pages/client/SuggestionPage.tsx';
 import CreateAccount from './pages/CreateAccount.tsx';
 import AdminRoot from './root/AdminRoot.tsx';
 import ClientRoot from './root/CustomerRoot.tsx';
+import PreviewShirt from './pages/PreviewShirt.tsx';
 
 const router = createBrowserRouter([
   {
@@ -50,6 +51,11 @@ const router = createBrowserRouter([
       },
 
       {
+        path: 'preview-design',
+        element: <PreviewShirt />,
+      },
+
+      {
         path: 'saved-designs',
         element: <SavedDesigns />,
       },
@@ -78,7 +84,10 @@ const router = createBrowserRouter([
         path: 'purchases',
         element: <Purchases />,
       },
-
+      {
+        path: 'preview-design',
+        element: <PreviewShirt />,
+      },
       {
         path: 'orders',
         element: <div> List of Customers Orders</div>,

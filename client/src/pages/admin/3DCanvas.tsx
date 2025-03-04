@@ -8,8 +8,8 @@ type TShirtProps = {
   color: string;
 };
 
-export const DEFAULT_TEXTURE = '/default-texture.png'; // Default T-shirt texture
-const TSHIRT_MODEL = '/tshirt.glb'; // 3D model path
+export const DEFAULT_TEXTURE = '/default-texture.png';
+const TSHIRT_MODEL = '/tshirt.glb';
 
 const TShirt = ({ texture, color }: { texture: string; color: string }) => {
   const { scene } = useGLTF(TSHIRT_MODEL);
@@ -38,17 +38,17 @@ const TShirt = ({ texture, color }: { texture: string; color: string }) => {
 
       if (loadedTexture) {
         material.map = loadedTexture;
-        material.color.set(0xffffff); // Keep original texture colors
+        material.color.set(0xffffff);
       } else {
         material.map = null;
-        material.color.set(color); // Apply solid color when no texture
+        material.color.set(color);
       }
 
       material.needsUpdate = true;
     }
   });
 
-  return <primitive object={scene} scale={0.1} />;
+  return <primitive object={scene} scale={0.2} position={[0, -6, 0]} />;
 };
 
 export interface ThreeDCanvasProps {
@@ -94,15 +94,18 @@ const ThreeDCanvas = ({
   tshirtColor: string;
   setExportDesign3D: React.Dispatch<React.SetStateAction<() => void>>;
 }) => {
+  const userRole = localStorage.getItem('userRole');
   return (
-    <div className="h-screen flex justify-center items-center flex-col w-full">
-      <Canvas camera={{ position: [0, 0, 10] }}>
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[2, 2, 2]} />
-        <TShirt texture={uploadedTexture} color={tshirtColor} />
-        <OrbitControls />
-        <CaptureHelper setExportFunction={setExportDesign3D} />
-      </Canvas>
+    <div className="flex justify-center items-center flex-col w-full ">
+      <div className="h-[80vh] w-full">
+        <Canvas camera={{ position: [0, 0, 15] }}>
+          <ambientLight intensity={0.5} />
+          <directionalLight position={[2, 2, 2]} />
+          <TShirt texture={uploadedTexture} color={tshirtColor} />
+          <OrbitControls />
+          <CaptureHelper setExportFunction={setExportDesign3D} />
+        </Canvas>
+      </div>
     </div>
   );
 };

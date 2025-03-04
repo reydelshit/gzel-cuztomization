@@ -20,16 +20,11 @@ export function Customize3DSidebar({
   setTshirtColor,
 }: Customize3DSidebarProps) {
   return (
-    <Card className="w-64 h-full border shadow-md">
+    <Card className="w-56 h-full border shadow-md">
       <CardHeader className="px-4 py-3 border-b">
         <CardTitle className="text-lg font-medium">Design Tools</CardTitle>
       </CardHeader>
       <CardContent className="p-4 space-y-4">
-        <Button variant="default" size="sm" className="w-full">
-          <Eye className="mr-2 h-4 w-4" />
-          Preview Design
-        </Button>
-
         {/* Image Upload */}
         <div className="space-y-2">
           <Label htmlFor="image-upload" className="text-sm font-medium">
