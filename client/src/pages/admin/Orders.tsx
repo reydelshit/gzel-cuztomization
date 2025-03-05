@@ -148,7 +148,7 @@ export default function Orders() {
           receiver_id: user_id,
         });
 
-        toast({
+        toast({ 
           title: 'Order Marked as Done',
           description: 'Your order has been successfully marked as done!',
         });

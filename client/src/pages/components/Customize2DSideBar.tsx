@@ -31,7 +31,7 @@ const Customize2DSideBar = ({
   selectedFont,
 }: {
   addImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  patterns: { name: string; src: string }[];
+  patterns: { id: number; name: string; image: string }[];
   addPattern: (src: string) => void;
   addText: () => void;
   toggleDrawingMode: () => void;
@@ -65,11 +65,11 @@ const Customize2DSideBar = ({
                   <div
                     key={index}
                     className="flex flex-col items-center group cursor-pointer"
-                    onClick={() => addPattern(pattern.src)}
+                    onClick={() => addPattern(pattern.image)}
                   >
                     <div className="relative overflow-hidden rounded-md border border-border hover:border-primary transition-colors">
                       <img
-                        src={pattern.src || '/placeholder.svg'}
+                        src={pattern.image || '/placeholder.svg'}
                         alt={pattern.name}
                         className="h-16 w-16 object-cover group-hover:scale-105 transition-transform"
                       />

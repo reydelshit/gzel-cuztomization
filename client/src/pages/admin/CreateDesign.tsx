@@ -14,19 +14,7 @@ import { SaveDesignDialog } from '../components/DialogSaveDesign2D';
 import TShirtSelection from '../components/TShirtSelection';
 import ThreeDCanvas, { DEFAULT_TEXTURE } from './3DCanvas';
 import { Eye, SwitchCamera } from 'lucide-react';
-
-const patterns = [
-  { name: 'Stripes', src: pattern1 },
-  { name: 'Polka Dots', src: pattern1 },
-  { name: 'Stripes', src: pattern1 },
-  { name: 'Polka Dots', src: pattern1 },
-  { name: 'Stripes', src: pattern1 },
-  { name: 'Polka Dots', src: pattern1 },
-  { name: 'Stripes', src: pattern1 },
-  { name: 'Polka Dots', src: pattern1 },
-  { name: 'Stripes', src: pattern1 },
-  { name: 'Polka Dots', src: pattern1 },
-];
+import { patterns } from '@/data/patterns';
 
 const CreateDesign: React.FC = () => {
   const canvasRef = useRef<fabric.Canvas | null>(null);
