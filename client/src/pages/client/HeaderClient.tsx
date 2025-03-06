@@ -53,7 +53,7 @@ export function HeaderClient({ clientName, handleLogout }: HeaderClientProps) {
           to="/client"
           className="text-lg font-semibold text-gray-800 hover:text-gray-600 transition-colors"
         >
-          GZEL Digital Design and Printing
+          KULASTIKO GRAPHICS & PRINTING SERVICES
         </Link>
         <Separator orientation="vertical" className="h-6" />
         <Link

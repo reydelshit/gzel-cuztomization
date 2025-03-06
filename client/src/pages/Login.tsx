@@ -82,7 +82,7 @@ const Login = () => {
       <div className="w-full text-center flex  justify-center items-center gap-[5rem]">
         <div className=" bg-white text-black py-4 px-[3rem] w-[25%] h-[500px] text-center items-center flex flex-col justify-center rounded-3xl ">
           <h1 className=" font-bold text-2xl my-4">
-            Online Apparel Customized Clothing
+            KULASTIKO GRAPHICS & PRINTING SERVICES
           </h1>
           <form
             onSubmit={handleLogin}

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 type InputType =
@@ -18,6 +18,7 @@ const CreateAccount = () => {
     email: '',
     password: '',
   });
+  const [seconds, setSeconds] = useState(0);
 
   const handleInput = (e: InputType) => {
     setUserData({
@@ -40,22 +41,40 @@ const CreateAccount = () => {
       if (String(res.data.status) === 'success') {
         console.log('Account created successfully');
 
-        toast({
-          title: 'Account Created',
-          description: 'Your account has been successfully created.',
-        });
-
         setUserData({
           firstName: '',
           lastName: '',
           email: '',
           password: '',
         });
+
+        toast({
+          title: 'Account Created',
+          description: 'Your account has been successfully created.',
+        });
+
+        setSeconds(5);
       }
     } catch (error) {
       console.error('Error creating account:', error);
     }
   };
+
+  useEffect(() => {
+    if (seconds > 0) {
+      const interval = setInterval(() => {
+        setSeconds((prevSeconds) => {
+          if (prevSeconds === 1) {
+            clearInterval(interval);
+            window.location.href = '/login';
+          }
+          return prevSeconds - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [seconds]);
 
   return (
     <div
@@ -69,8 +88,8 @@ const CreateAccount = () => {
       <div className="grid md:grid-cols-2 h-[40%] rounded-3xl overflow-hidden">
         <div className="bg-[#74AB6E] p-8 flex flex-col">
           <div className="mb-6">
-            <h1 className="text-3xl font-bold text-white">GZEL</h1>
-            <p className="text-white">Digital Design and Printing</p>
+            <h1 className="text-3xl font-bold text-white">KULASTIKO</h1>
+            <p className="text-white"> GRAPHICS & PRINTING SERVICES</p>
           </div>
 
           <div className="flex-grow flex items-center justify-center">
@@ -113,6 +132,7 @@ const CreateAccount = () => {
                   name="firstName"
                   required
                   onChange={handleInput}
+                  value={userData.firstName}
                 />
                 <Input
                   type="text"
@@ -121,6 +141,7 @@ const CreateAccount = () => {
                   name="lastName"
                   required
                   onChange={handleInput}
+                  value={userData.lastName}
                 />
               </div>
 
@@ -132,6 +153,7 @@ const CreateAccount = () => {
                   name="email"
                   required
                   onChange={handleInput}
+                  value={userData.email}
                 />
               </div>
 
@@ -143,6 +165,7 @@ const CreateAccount = () => {
                   name="password"
                   required
                   onChange={handleInput}
+                  value={userData.password}
                 />
               </div>
 
@@ -152,6 +175,12 @@ const CreateAccount = () => {
               >
                 Create account
               </Button>
+
+              <span>
+                {seconds > 0
+                  ? `Redirecting to login page in ${seconds} seconds...`
+                  : ''}
+              </span>
             </form>
           </div>
         </div>
