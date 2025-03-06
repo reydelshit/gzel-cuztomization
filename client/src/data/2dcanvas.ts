@@ -1,5 +1,5 @@
-import { useRef } from 'react';
 import * as fabric from 'fabric';
+import { useRef } from 'react';
 
 const canvasRef = useRef<fabric.Canvas | null>(null);
 

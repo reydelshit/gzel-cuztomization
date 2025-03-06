@@ -3,15 +3,14 @@ import { useNavigate } from 'react-router-dom';
 // import Tshirt1 from '@/assets/t1f.png';
 // import Tshirt3 from '@/assets/t3f.png';
 
+import Tshirt8 from '@/assets/t1f.png';
+import Tshirt7 from '@/assets/t2f.png';
 import Tshirt1 from '@/assets/tshirts/longsleevecolored.png';
 import Tshirt2 from '@/assets/tshirts/longsleevewhite.png';
 import Tshirt3 from '@/assets/tshirts/polobalolet.png';
 import Tshirt4 from '@/assets/tshirts/poloblack.png';
 import Tshirt5 from '@/assets/tshirts/polowhite.png';
 import Tshirt6 from '@/assets/tshirts/tshirtwhite.png';
-import Tshirt7 from '@/assets/t2f.png';
-import Tshirt8 from '@/assets/t1f.png';
-import { all } from 'axios';
 
 const allTshirts = [
   {

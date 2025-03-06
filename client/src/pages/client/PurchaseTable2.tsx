@@ -45,10 +45,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import useCreateNotif from '@/hooks/useCreateNotif';
 import { toast } from '@/hooks/use-toast';
+import useCreateNotif from '@/hooks/useCreateNotif';
+import axios from 'axios';
 
 export type ProductOrders = {
   created_at: string;
@@ -127,18 +126,18 @@ export default function PurchaseTable2() {
     setCurrentPage(1);
   };
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
-  const handleCLickNavigate = (type: string) => {
-    const routes: Record<string, string> = {
-      new: '/orders/new',
-      pending: '/orders/pending',
-    };
+  // const handleCLickNavigate = (type: string) => {
+  //   const routes: Record<string, string> = {
+  //     new: '/orders/new',
+  //     pending: '/orders/pending',
+  //   };
 
-    if (routes[type]) {
-      navigate(routes[type]);
-    }
-  };
+  //   if (routes[type]) {
+  //     navigate(routes[type]);
+  //   }
+  // };
 
   const statusColors: Record<ProductOrders['status'], string> = {
     new: 'bg-blue-100 text-blue-500',

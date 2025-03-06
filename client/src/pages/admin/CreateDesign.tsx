@@ -1,20 +1,19 @@
 import * as fabric from 'fabric';
 import { useEffect, useRef, useState } from 'react';
 
-import pattern1 from '@/assets/pattern1.avif';
 // import pattern2 from '@/assets/pattern2.avif';
 
 import { Button } from '@/components/ui/button';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import { patterns } from '@/data/patterns';
+import { Eye, SwitchCamera } from 'lucide-react';
 import { OrderDialogTrigger } from '../client/OrderDialogTrigger';
 import Customize2DSideBar from '../components/Customize2DSideBar';
 import { Customize3DSidebar } from '../components/Customize3DSidebar';
 import { SaveDesignDialog } from '../components/DialogSaveDesign2D';
 import TShirtSelection from '../components/TShirtSelection';
 import ThreeDCanvas, { DEFAULT_TEXTURE } from './3DCanvas';
-import { Eye, SwitchCamera } from 'lucide-react';
-import { patterns } from '@/data/patterns';
 
 const CreateDesign: React.FC = () => {
   const canvasRef = useRef<fabric.Canvas | null>(null);

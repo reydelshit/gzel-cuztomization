@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react';
 import * as fabric from 'fabric';
+import { useRef, useState } from 'react';
 
 import {
   default as pattern1,
@@ -19,7 +19,7 @@ const patterns = [
   { name: 'Polka Dots', src: pattern2 },
 ];
 
-const useTShirtDesign = (selectedTShirt: string) => {
+const useTShirtDesign = () => {
   const canvasRef = useRef<fabric.Canvas | null>(null);
   const [selectedFont, setSelectedFont] = useState('Arial');
   const [isDrawing, setIsDrawing] = useState(false);

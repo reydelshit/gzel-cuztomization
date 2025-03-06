@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
 import jsPDF from 'jspdf';
+import { useCallback } from 'react';
 
 interface PrintPDFOptions<T extends Record<string, string>> {
   data: T;

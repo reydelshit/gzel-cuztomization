@@ -1,10 +1,10 @@
 import BackgroundImage from '@/assets/gzel.jpg';
+import Model from '@/assets/model.jpg';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useState } from 'react';
-import Model from '@/assets/model.jpg';
-import axios from 'axios';
 import { toast } from '@/hooks/use-toast';
+import axios from 'axios';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 type InputType =

@@ -6,25 +6,23 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { StallsTypes } from '@/types';
-import { Label } from './ui/label';
-import { Button } from './ui/button';
-import { History } from 'lucide-react';
 import {
   Table,
   TableBody,
   TableCaption,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
-import moment from 'moment';
-import PaginationTemplate from './Pagination';
 import usePagination from '@/hooks/usePagination';
-
+import { StallsTypes } from '@/types';
+import axios from 'axios';
+import { History } from 'lucide-react';
+import moment from 'moment';
+import { useEffect, useState } from 'react';
+import PaginationTemplate from './Pagination';
+import { Button } from './ui/button';
+import { Label } from './ui/label';
 interface PaymentHistory {
   payment_id: number;
   current_balance: number;

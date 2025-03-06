@@ -3,11 +3,6 @@ import { Canvas, useThree } from '@react-three/fiber';
 import { useEffect, useState } from 'react';
 import * as THREE from 'three';
 
-type TShirtProps = {
-  texture: string;
-  color: string;
-};
-
 export const DEFAULT_TEXTURE = '/default-texture.png';
 const TSHIRT_MODEL = '/tshirt.glb';
 
@@ -94,7 +89,7 @@ const ThreeDCanvas = ({
   tshirtColor: string;
   setExportDesign3D: React.Dispatch<React.SetStateAction<() => void>>;
 }) => {
-  const userRole = localStorage.getItem('userRole');
+  // const userRole = localStorage.getItem('userRole');
   return (
     <div className="flex justify-center items-center flex-col w-full ">
       <div className="h-[80vh] w-full">

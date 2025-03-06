@@ -124,14 +124,3 @@ export function HeaderAdmin({
     </header>
   );
 }
-
-function NotificationItem({ name }: { name: string }) {
-  return (
-    <div className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-md transition-colors">
-      <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
-      <span>
-        New Order from <strong>{name}</strong>
-      </span>
-    </div>
-  );
-}

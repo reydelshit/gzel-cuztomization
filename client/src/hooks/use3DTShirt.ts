@@ -1,11 +1,5 @@
-import { useRef, useState } from 'react';
-import * as fabric from 'fabric';
 import { DEFAULT_TEXTURE } from '@/pages/admin/3DCanvas';
-
-const patterns = [
-  { name: 'Stripes', src: '/pattern1.avif' },
-  { name: 'Polka Dots', src: '/pattern2.avif' },
-];
+import { useState } from 'react';
 
 const useThreeDTShirt = () => {
   const [uploadedTexture, setUploadedTexture] =

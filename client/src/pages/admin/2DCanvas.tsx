@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
 import * as fabric from 'fabric';
+import { useEffect, useRef } from 'react';
 
 const TShirtCanvas = ({ selectedTShirt }: { selectedTShirt: string }) => {
   const canvasRef = useRef<fabric.Canvas | null>(null);

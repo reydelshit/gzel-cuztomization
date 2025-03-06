@@ -1,20 +1,8 @@
 import { Button } from '@/components/ui/button';
-import { toast } from '@/hooks/use-toast';
 import axios from 'axios';
-import { Edit, Eye, Plus, Trash2 } from 'lucide-react';
-import React, { useCallback, useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+import { Edit, Eye, Plus } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface TshirtDesignType {
   saveDesignID: number;
@@ -28,9 +16,9 @@ interface TshirtDesignType {
 
 const SuggestionPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  // const location = useLocation();
   const userRole = localStorage.getItem('userRole');
-  const userID = localStorage.getItem('userID');
+  // const userID = localStorage.getItem('userID');
   const [tshirtDesigns, setTshirtDesigns] = useState<TshirtDesignType[]>([]);
   const [hoveredDesign, setHoveredDesign] = useState<number | null>(null);
 

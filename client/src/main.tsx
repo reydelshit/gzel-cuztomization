@@ -8,17 +8,17 @@ import { Toaster } from './components/ui/toaster.tsx';
 import Login from './pages/Login.tsx';
 
 import CreateDesign from './pages/admin/CreateDesign.tsx';
+import NewOrders from './pages/admin/NewOrders.tsx';
 import Orders from './pages/admin/Orders.tsx';
 import Reports from './pages/admin/Reports.tsx';
 import SavedDesigns from './pages/admin/SavedDesigns.tsx';
-import NewOrders from './pages/admin/NewOrders.tsx';
 import ProcessingOrders from './pages/client/ProcessingOrders.tsx';
 import Purchases from './pages/client/Purchases.tsx';
 import SuggestionPage from './pages/client/SuggestionPage.tsx';
 import CreateAccount from './pages/CreateAccount.tsx';
+import PreviewShirt from './pages/PreviewShirt.tsx';
 import AdminRoot from './root/AdminRoot.tsx';
 import ClientRoot from './root/CustomerRoot.tsx';
-import PreviewShirt from './pages/PreviewShirt.tsx';
 
 const router = createBrowserRouter([
   {

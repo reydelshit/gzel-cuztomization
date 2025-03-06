@@ -165,7 +165,7 @@ const Reports = () => {
   }, [period, orderData]);
 
   // Calculate profit percentage (this would typically be based on costs vs revenue)
-  const profitPercentage = 3.5;
+  // const profitPercentage = 3.5;
 
   // Format currency
   const formatCurrency = (value: number) => {
@@ -173,15 +173,15 @@ const Reports = () => {
   };
 
   // Format date for display
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
+  // const formatDate = (dateString: string) => {
+  //   const date = new Date(dateString);
+  //   return date.toLocaleDateString('en-US', {
+  //     month: 'short',
+  //     day: 'numeric',
+  //     hour: '2-digit',
+  //     minute: '2-digit',
+  //   });
+  // };
 
   const statusColors: Record<ProductOrders['status'], string> = {
     new: 'bg-blue-100 text-blue-500',

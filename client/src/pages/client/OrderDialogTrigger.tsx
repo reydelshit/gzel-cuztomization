@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import OrderDialog from './OrderDialog';
 
 import { Input } from '@/components/ui/input';
@@ -11,8 +11,8 @@ import axios from 'axios';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
-import { Check, CreditCard, DollarSign, Upload, Wallet, X } from 'lucide-react';
 import useCreateNotif from '@/hooks/useCreateNotif';
+import { Check, CreditCard, DollarSign, Upload, Wallet, X } from 'lucide-react';
 
 interface OrderData {
   fabric: string;
@@ -44,7 +44,7 @@ export function OrderDialogTrigger({
   const [storeBlob, setStoreBlob] = useState<Blob | null>(null);
 
   const userID = localStorage.getItem('userID');
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
   const { createNotif } = useCreateNotif();
   const [paymentProof, setPaymentProof] = useState<File | null>(null);
   const [uploadStatus, setUploadStatus] = useState<
@@ -188,7 +188,7 @@ export function OrderDialogTrigger({
         variant: 'destructive',
       });
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   };
 

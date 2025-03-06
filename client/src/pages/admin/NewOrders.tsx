@@ -1,7 +1,3 @@
-import axios from 'axios';
-import { CheckCircle, FileTextIcon, XCircle } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
-import { OrderCard, ProductOrders } from './Orders';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,6 +10,10 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
+import axios from 'axios';
+import { CheckCircle, FileTextIcon, XCircle } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { OrderCard, ProductOrders } from './Orders';
 
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -30,6 +30,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { CardFooter } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { toast } from '@/hooks/use-toast';
+import useCreateNotif from '@/hooks/useCreateNotif';
 import {
   CreditCard,
   Eye,
@@ -38,9 +40,6 @@ import {
   ShoppingBag,
   User,
 } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
-import useCreateNotif from '@/hooks/useCreateNotif';
-import { title } from 'process';
 
 const NewOrders = () => {
   const [productsOrders, setProductsOrders] = useState<ProductOrders[]>([]);
@@ -50,7 +49,7 @@ const NewOrders = () => {
   );
   const { createNotif } = useCreateNotif();
 
-  const [orderStatus, setOrderStatus] = useState('new');
+  // const [orderStatus, setOrderStatus] = useState('new');
   const [reason, setReason] = useState('');
   const fetchOrders = useCallback(async () => {
     try {
@@ -79,7 +78,7 @@ const NewOrders = () => {
   };
 
   const handleAcceptOrder = async (order_id: number) => {
-    setOrderStatus('processing');
+    // setOrderStatus('processing');
 
     try {
       const res = await axios.put(

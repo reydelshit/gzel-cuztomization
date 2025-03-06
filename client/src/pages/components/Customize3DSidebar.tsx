@@ -1,4 +1,4 @@
-import { Download, Eye, ImagePlus, Palette } from 'lucide-react';
+import { Download, ImagePlus, Palette } from 'lucide-react';
 import type * as React from 'react';
 
 import { Button } from '@/components/ui/button';

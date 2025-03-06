@@ -1,18 +1,7 @@
 import axios from 'axios';
-import { CheckCircle, ClockIcon, FileTextIcon, XCircle } from 'lucide-react';
+import { ClockIcon } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 
 import { Badge } from '@/components/ui/badge';
@@ -29,6 +18,13 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 import { Button } from '@/components/ui/button';
 import { CardFooter } from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { toast } from '@/hooks/use-toast';
 import useCreateNotif from '@/hooks/useCreateNotif';
@@ -41,13 +37,6 @@ import {
   User,
 } from 'lucide-react';
 import { OrderCard, ProductOrders } from '../admin/Orders';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 
 const NewOrders = () => {
   const [productsOrders, setProductsOrders] = useState<ProductOrders[]>([]);
