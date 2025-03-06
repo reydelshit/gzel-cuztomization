@@ -36,6 +36,8 @@ const CreateDesign: React.FC = () => {
   const [brushColor, setBrushColor] = useState('black');
   const [brushSize, setBrushSize] = useState(5);
 
+  const [isOnPreview, setIsOnPreview] = useState(false);
+
   useEffect(() => {
     if (switchCanvas) return;
 
@@ -270,54 +272,62 @@ const CreateDesign: React.FC = () => {
         <>
           {' '}
           <div className="  w-56">
-            <Button
-              onClick={() => {
-                if (!switchCanvas && canvasRef.current) {
-                  savedCanvasDataRef.current = JSON.stringify(
-                    canvasRef.current.toJSON(),
-                  );
-
-                  canvasRef.current.dispose();
-                  canvasRef.current = null;
-                }
-
-                setSwitchCanvas(!switchCanvas);
-
-                setTimeout(() => {
+            {!isOnPreview && (
+              <Button
+                onClick={() => {
                   if (!switchCanvas && canvasRef.current) {
-                    canvasRef.current.renderAll();
-                  }
-                }, 100);
-              }}
-              className="my-2  w-56"
-            >
-              <SwitchCamera className="mr-2 h-4 w-4" />{' '}
-              {switchCanvas ? 'Switch to 2D' : 'Switch to 3D'}
-            </Button>
+                    savedCanvasDataRef.current = JSON.stringify(
+                      canvasRef.current.toJSON(),
+                    );
 
-            <Button
-              onClick={() => {
-                if (userRole === 'client') {
-                  navigate('/client/preview-design');
-                } else {
-                  navigate('/preview-design');
-                }
-              }}
-              variant="default"
-              size="sm"
-              className="mb-2 w-56"
-            >
-              <Eye className="mr-2 h-4 w-4" />
-              Preview Design
-            </Button>
+                    canvasRef.current.dispose();
+                    canvasRef.current = null;
+                  }
+
+                  setSwitchCanvas(!switchCanvas);
+
+                  setTimeout(() => {
+                    if (!switchCanvas && canvasRef.current) {
+                      canvasRef.current.renderAll();
+                    }
+                  }, 100);
+                }}
+                className="my-2  w-56"
+              >
+                <SwitchCamera className="mr-2 h-4 w-4" />{' '}
+                {switchCanvas ? 'Switch to 2D' : 'Switch to 3D'}
+              </Button>
+            )}
+
+            {switchCanvas && (
+              <Button
+                onClick={() => {
+                  // if (userRole === 'client') {
+                  //   navigate('/client/preview-design');
+                  // } else {
+                  //   navigate('/preview-design');
+                  // }
+
+                  setIsOnPreview(!isOnPreview);
+                }}
+                className="w-56 mb-2 h-[2.3rem] my-2"
+              >
+                <Eye className="mr-2 h-4 w-4" />
+                {isOnPreview ? 'Back to Design' : 'Preview Design'}
+              </Button>
+            )}
 
             {switchCanvas ? (
-              <Customize3DSidebar
-                handleImageUpload={handleImageUpload}
-                tshirtColor={tshirtColor}
-                setTshirtColor={setTshirtColor}
-                exportDesign3D={exportDesign3D}
-              />
+              <>
+                {!isOnPreview && (
+                  <Customize3DSidebar
+                    handleImageUpload={handleImageUpload}
+                    tshirtColor={tshirtColor}
+                    setTshirtColor={setTshirtColor}
+                    exportDesign3D={exportDesign3D}
+                  />
+                )}
+              </>
             ) : (
               <Customize2DSideBar
                 addImage={addImage}
@@ -338,23 +348,27 @@ const CreateDesign: React.FC = () => {
           </div>
           {switchCanvas ? (
             <div className="flex justify-center items-center w-full relative">
-              <div className="absolute top-5 left-5 z-40 flex flex-col space-y-4">
-                <header className="flex items-center justify-between">
-                  <h1 className="text-2xl font-bold text-black uppercase italic">
-                    Customize your T-shirt
-                  </h1>
-                </header>
+              {!isOnPreview && (
+                <div className="absolute top-5 left-5 z-40 flex flex-col space-y-4">
+                  <header className="flex items-center justify-between">
+                    <h1 className="text-2xl font-bold text-black uppercase italic">
+                      Customize your T-shirt
+                    </h1>
+                  </header>
 
-                <div className="flex space-x-4">
-                  {userRole === 'client' && (
-                    <OrderDialogTrigger
-                      switchCanvas={switchCanvas}
-                      canvasRef={canvasRef}
-                    />
-                  )}
+                  <div className="flex space-x-4">
+                    {userRole === 'client' && (
+                      <OrderDialogTrigger
+                        switchCanvas={switchCanvas}
+                        canvasRef={canvasRef}
+                      />
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
+
               <ThreeDCanvas
+                isOnPreview={isOnPreview}
                 setExportDesign3D={setExportDesign3D}
                 uploadedTexture={uploadedTexture}
                 tshirtColor={tshirtColor}

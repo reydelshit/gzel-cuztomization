@@ -6,7 +6,15 @@ import * as THREE from 'three';
 export const DEFAULT_TEXTURE = '/default-texture.png';
 const TSHIRT_MODEL = '/tshirt.glb';
 
-const TShirt = ({ texture, color }: { texture: string; color: string }) => {
+const TShirt = ({
+  texture,
+  color,
+  scale,
+}: {
+  texture: string;
+  color: string;
+  scale: number;
+}) => {
   const { scene } = useGLTF(TSHIRT_MODEL);
   const [loadedTexture, setLoadedTexture] = useState<THREE.Texture | null>(
     null,
@@ -43,7 +51,7 @@ const TShirt = ({ texture, color }: { texture: string; color: string }) => {
     }
   });
 
-  return <primitive object={scene} scale={0.2} position={[0, -6, 0]} />;
+  return <primitive object={scene} scale={scale} position={[0, -4, 0]} />;
 };
 
 export interface ThreeDCanvasProps {
@@ -81,6 +89,7 @@ const CaptureHelper = ({
 };
 
 const ThreeDCanvas = ({
+  isOnPreview,
   uploadedTexture,
   tshirtColor,
   setExportDesign3D,
@@ -88,15 +97,22 @@ const ThreeDCanvas = ({
   uploadedTexture: string;
   tshirtColor: string;
   setExportDesign3D: React.Dispatch<React.SetStateAction<() => void>>;
+  isOnPreview: boolean;
 }) => {
   // const userRole = localStorage.getItem('userRole');
+  const scaleValue = isOnPreview ? 0.15 : 0.1;
+
   return (
-    <div className="flex justify-center items-center flex-col w-full ">
-      <div className="h-[80vh] w-full">
-        <Canvas camera={{ position: [0, 0, 15] }}>
+    <div className="flex justify-center items-center flex-col w-full min-h-[80vh">
+      <div className=" w-full h-[750px] ">
+        <Canvas camera={{ position: [0, 0, 8] }}>
           <ambientLight intensity={0.5} />
           <directionalLight position={[2, 2, 2]} />
-          <TShirt texture={uploadedTexture} color={tshirtColor} />
+          <TShirt
+            texture={uploadedTexture}
+            color={tshirtColor}
+            scale={scaleValue}
+          />
           <OrbitControls />
           <CaptureHelper setExportFunction={setExportDesign3D} />
         </Canvas>

@@ -1,5 +1,5 @@
 import BackgroundImage from '@/assets/gzel.jpg';
-import Model from '@/assets/model.jpg';
+import Model from '@/assets/model.png';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
