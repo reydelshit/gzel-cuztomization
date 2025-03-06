@@ -37,6 +37,7 @@ import {
   User,
 } from 'lucide-react';
 import { OrderCard, ProductOrders } from '../admin/Orders';
+import ImageDownloadButton from '../components/ImageDownloadButton';
 
 const NewOrders = () => {
   const [productsOrders, setProductsOrders] = useState<ProductOrders[]>([]);
@@ -422,6 +423,11 @@ const NewOrders = () => {
                         </div>
                       </DialogContent>
                     </Dialog>
+
+                    <ImageDownloadButton
+                      imageUrl={selectedOrder.tshirtDesignPath}
+                      filename={`tshirt-design-${selectedOrder.order_id} - ${selectedOrder.fullname}`}
+                    />
                   </div>
                 </div>
 

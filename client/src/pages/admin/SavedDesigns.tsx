@@ -16,6 +16,7 @@ import axios from 'axios';
 import { Edit, Eye, Plus, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import ImageDownloadButton from '../components/ImageDownloadButton';
 
 interface TshirtDesignType {
   saveDesignID: number;
@@ -169,20 +170,27 @@ const SavedDesigns = () => {
                   onMouseLeave={() => setHoveredDesign(null)}
                 >
                   {userRole === 'admin' && (
-                    <div className="flex items-center space-x-2 my-4 self-end px-4">
-                      <Checkbox
-                        checked={design.isSuggestion === 'yes'}
-                        id={`suggestions-${design.saveDesignID}`}
-                        onCheckedChange={(checked: boolean) =>
-                          handleCheckedChange(design.saveDesignID, checked)
-                        }
+                    <div className="flex flex-row items-center justify-between gap-3 p-4">
+                      <ImageDownloadButton
+                        isAbsolute={false}
+                        imageUrl={design.designPath}
+                        filename={`tshirt-design-${design.designName} - ${design.created_at}`}
                       />
-                      <label
-                        htmlFor="suggestions"
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        Mark as Suggestion
-                      </label>
+                      <div className="flex items-center space-x-2 my-4 self-end px-4">
+                        <Checkbox
+                          checked={design.isSuggestion === 'yes'}
+                          id={`suggestions-${design.saveDesignID}`}
+                          onCheckedChange={(checked: boolean) =>
+                            handleCheckedChange(design.saveDesignID, checked)
+                          }
+                        />
+                        <label
+                          htmlFor="suggestions"
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          Mark as Suggestion
+                        </label>
+                      </div>
                     </div>
                   )}
                   <div

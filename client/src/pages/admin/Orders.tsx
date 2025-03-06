@@ -39,6 +39,7 @@ import { useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/hooks/use-toast';
 import useCreateNotif from '@/hooks/useCreateNotif';
+import ImageDownloadButton from '../components/ImageDownloadButton';
 
 export type ProductOrders = {
   created_at: string;
@@ -148,7 +149,7 @@ export default function Orders() {
           receiver_id: user_id,
         });
 
-        toast({ 
+        toast({
           title: 'Order Marked as Done',
           description: 'Your order has been successfully marked as done!',
         });
@@ -331,7 +332,7 @@ export default function Orders() {
                             </DialogTrigger>
                             <DialogContent className="max-w-[1200px]">
                               <DialogHeader>
-                                <DialogTitle>Design Preview</DialogTitle>
+                                <DialogTitle>Proof of Payment</DialogTitle>
                                 <DialogDescription>
                                   {order.payment_proof ? (
                                     <div className="mt-4 flex justify-center">
@@ -378,7 +379,7 @@ export default function Orders() {
                                     View Design
                                   </Button>
                                 </DialogTrigger>
-                                <DialogContent className="max-w-[1200px]">
+                                <DialogContent className="max-w-[1200px] bg-slate-400 border-none text-white">
                                   <DialogHeader>
                                     <DialogTitle>Design Preview</DialogTitle>
                                     <DialogDescription>
@@ -395,6 +396,11 @@ export default function Orders() {
                                             }
                                             alt="T-shirt Design"
                                             className="max-h-[700px] object-contain rounded-md "
+                                          />
+
+                                          <ImageDownloadButton
+                                            imageUrl={order.tshirtDesignPath}
+                                            filename={`tshirt-design-${order.order_id} - ${order.fullname}`}
                                           />
                                         </div>
                                       ) : (

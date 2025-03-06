@@ -32,6 +32,7 @@ import {
 } from 'recharts';
 import { ProductOrders } from './Orders';
 
+import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
   DialogContent,
@@ -40,8 +41,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-
-import { Badge } from '@/components/ui/badge';
+import { format, subDays } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz';
 
 const Reports = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -75,7 +76,6 @@ const Reports = () => {
     return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
   };
 
-  // Process data based on period and status filter
   const processedData = useMemo(() => {
     if (!orderData.length) return [];
 
@@ -88,8 +88,6 @@ const Reports = () => {
               order.status.toLowerCase() === statusFilter.toLowerCase(),
           );
 
-    // Helper function to get week number
-
     // Group by period
     const groupedData = filteredOrders.reduce(
       (
@@ -100,11 +98,11 @@ const Reports = () => {
         let key = '';
 
         if (period === 'day') {
-          key = date.toLocaleDateString('en-US', { weekday: 'short' }); // "Mon", "Tue", etc.
+          key = date.toLocaleDateString('en-US', { weekday: 'short' });
         } else if (period === 'week') {
           key = `Week ${getWeekNumber(date)}`;
         } else {
-          key = date.toLocaleDateString('en-US', { month: 'short' }); // "Jan", "Feb", etc.
+          key = date.toLocaleDateString('en-US', { month: 'short' });
         }
 
         if (!acc[key]) {
@@ -131,57 +129,55 @@ const Reports = () => {
     });
   }, [period, statusFilter, orderData]);
 
-  // Calculate total earnings and profit percentage
   const totalEarnings = useMemo(() => {
     if (!orderData.length) return 0;
 
     const now = new Date();
-    const today = now.toLocaleDateString('en-CA'); // "YYYY-MM-DD" in local timezone
+    let today = format(now, 'yyyy-MM-dd');
+
+    // Subtract 1 day from today's date
+    today = format(subDays(now, 1), 'yyyy-MM-dd');
+
     const currentWeek = getWeekNumber(now);
     const currentMonth = now.getMonth();
     const currentYear = now.getFullYear();
 
+    console.log(`Today (adjusted): ${today}, Current Date: ${now}`);
+
     return orderData.reduce((sum, order) => {
       const orderDate = new Date(order.created_at);
-      const orderWeek = getWeekNumber(orderDate);
-      const orderMonth = orderDate.getMonth();
-      const orderYear = orderDate.getFullYear();
-      const orderDay = orderDate.toLocaleDateString('en-CA'); // Local timezone
+      console.log(
+        `Raw Order Created At: ${order.created_at}, Parsed Order Date: ${orderDate}`,
+      );
+
+      // Convert UTC order date to Singapore Standard Time (SGT)
+      let zonedOrderDate = toZonedTime(orderDate, 'Asia/Singapore');
+
+      const orderDay = format(zonedOrderDate, 'yyyy-MM-dd');
+
+      console.log(`Order Day (SGT): ${orderDay}, Adjusted Today: ${today}`);
 
       if (
         (period === 'day' && orderDay === today) ||
         (period === 'week' &&
-          orderWeek === currentWeek &&
-          orderYear === currentYear) ||
+          getWeekNumber(zonedOrderDate) === currentWeek &&
+          zonedOrderDate.getFullYear() === currentYear) ||
         (period === 'month' &&
-          orderMonth === currentMonth &&
-          orderYear === currentYear) ||
+          zonedOrderDate.getMonth() === currentMonth &&
+          zonedOrderDate.getFullYear() === currentYear) ||
         period === 'all'
       ) {
+        console.log(`Adding Order Price: ${order.totalPrice}`);
         return sum + order.totalPrice;
       }
+
       return sum;
     }, 0);
   }, [period, orderData]);
-
-  // Calculate profit percentage (this would typically be based on costs vs revenue)
-  // const profitPercentage = 3.5;
-
   // Format currency
   const formatCurrency = (value: number) => {
     return `P ${value.toLocaleString()}`;
   };
-
-  // Format date for display
-  // const formatDate = (dateString: string) => {
-  //   const date = new Date(dateString);
-  //   return date.toLocaleDateString('en-US', {
-  //     month: 'short',
-  //     day: 'numeric',
-  //     hour: '2-digit',
-  //     minute: '2-digit',
-  //   });
-  // };
 
   const statusColors: Record<ProductOrders['status'], string> = {
     new: 'bg-blue-100 text-blue-500',
@@ -491,7 +487,7 @@ const Reports = () => {
                           </DialogTrigger>
                           <DialogContent className="max-w-[1200px]">
                             <DialogHeader>
-                              <DialogTitle>Design Preview</DialogTitle>
+                              <DialogTitle>Proof of Payment</DialogTitle>
                               <DialogDescription>
                                 {order.payment_proof ? (
                                   <div className="mt-4 flex justify-center">

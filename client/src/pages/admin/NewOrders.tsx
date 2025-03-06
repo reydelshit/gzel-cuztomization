@@ -40,6 +40,7 @@ import {
   ShoppingBag,
   User,
 } from 'lucide-react';
+import ImageDownloadButton from '../components/ImageDownloadButton';
 
 const NewOrders = () => {
   const [productsOrders, setProductsOrders] = useState<ProductOrders[]>([]);
@@ -408,14 +409,18 @@ const NewOrders = () => {
                     <img
                       src={
                         selectedOrder.tshirtDesignPath
-                          ? `${
-                              import.meta.env.VITE_SERVER_LINK ||
-                              'https://example.com'
-                            }/${selectedOrder.tshirtDesignPath}`
+                          ? `${import.meta.env.VITE_SERVER_LINK}/${
+                              selectedOrder.tshirtDesignPath
+                            }`
                           : 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?q=80&w=1000'
                       }
                       alt="T-shirt Design"
                       className="w-full aspect-video object-contain bg-white"
+                    />
+
+                    <ImageDownloadButton
+                      imageUrl={selectedOrder.tshirtDesignPath}
+                      filename={`tshirt-design-${selectedOrder.order_id} - ${selectedOrder.fullname}`}
                     />
 
                     <Dialog>
@@ -429,14 +434,12 @@ const NewOrders = () => {
                           View Larger
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="max-w-4xl">
+                      <DialogContent className="max-w-4xl ">
                         <DialogHeader>
                           <DialogTitle>T-shirt Design Preview</DialogTitle>
-                          <DialogDescription>
-                            High-resolution preview of the custom t-shirt design
-                          </DialogDescription>
+                          <DialogDescription></DialogDescription>
                         </DialogHeader>
-                        <div className="mt-4 bg-white p-2 rounded-lg">
+                        <div className="mt-4  p-2 rounded-lg">
                           <img
                             src={
                               selectedOrder.tshirtDesignPath
