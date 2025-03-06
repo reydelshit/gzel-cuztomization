@@ -66,7 +66,7 @@ export function HeaderAdmin({
           to="/"
           className="text-xl font-semibold text-gray-800 hover:text-gray-600 transition-colors"
         >
-          Digital Design and Printing
+          KULASTIKO GRAPHICS & PRINTING SERVICES
         </Link>
       </div>
       <div className="flex items-center space-x-4">
