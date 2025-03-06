@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 // import pattern2 from '@/assets/pattern2.avif';
 
 import { Button } from '@/components/ui/button';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import { patterns } from '@/data/patterns';
 import { Eye, SwitchCamera } from 'lucide-react';
