@@ -20,7 +20,7 @@ const CreateDesign: React.FC = () => {
   const savedCanvasDataRef = useRef<string | null>(null);
   const [switchCanvas, setSwitchCanvas] = useState(false);
   const [isForUpdate, setIsForUpdate] = useState(false);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const location = useLocation();
   const params = new URLSearchParams(location.search);
