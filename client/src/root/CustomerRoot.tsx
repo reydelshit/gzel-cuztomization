@@ -1,6 +1,6 @@
 import { handleLogout } from '@/App';
 import { HeaderClient } from '@/pages/client/HeaderClient';
-import TShirtSelection from '@/pages/components/TShirtSelection';
+import TshirtSelectionVersionTwo from '@/pages/TshirtSelectionVersion2';
 import { useEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
@@ -43,7 +43,9 @@ const ClientRoot = () => {
             </div>
           </div>
           <main>
-            <TShirtSelection />
+            {/* <TShirtSelection /> */}
+
+            <TshirtSelectionVersionTwo />
           </main>
         </div>
       )}

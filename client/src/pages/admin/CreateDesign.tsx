@@ -12,7 +12,7 @@ import { OrderDialogTrigger } from '../client/OrderDialogTrigger';
 import Customize2DSideBar from '../components/Customize2DSideBar';
 import { Customize3DSidebar } from '../components/Customize3DSidebar';
 import { SaveDesignDialog } from '../components/DialogSaveDesign2D';
-import TShirtSelection from '../components/TShirtSelection';
+import TshirtSelectionVersionTwo from '../TshirtSelectionVersion2';
 import ThreeDCanvas, { DEFAULT_TEXTURE } from './3DCanvas';
 
 const CreateDesign: React.FC = () => {
@@ -37,6 +37,7 @@ const CreateDesign: React.FC = () => {
   const [brushSize, setBrushSize] = useState(5);
 
   const [isOnPreview, setIsOnPreview] = useState(false);
+  const [isOnPreview2D, setIsOnPreview2D] = useState(false);
 
   useEffect(() => {
     if (switchCanvas) return;
@@ -91,6 +92,8 @@ const CreateDesign: React.FC = () => {
           selectable: false,
           evented: false,
         });
+
+        img.hoverCursor = 'default';
 
         canvas.clear();
         canvas.add(img);
@@ -272,7 +275,7 @@ const CreateDesign: React.FC = () => {
         <>
           {' '}
           <div className="  w-56">
-            {!isOnPreview && (
+            {!isOnPreview && !isOnPreview2D && (
               <Button
                 onClick={() => {
                   if (!switchCanvas && canvasRef.current) {
@@ -299,7 +302,8 @@ const CreateDesign: React.FC = () => {
               </Button>
             )}
 
-            {switchCanvas && (
+            {switchCanvas ? (
+              // 3D preview button
               <Button
                 onClick={() => {
                   // if (userRole === 'client') {
@@ -315,6 +319,16 @@ const CreateDesign: React.FC = () => {
                 <Eye className="mr-2 h-4 w-4" />
                 {isOnPreview ? 'Back to Design' : 'Preview Design'}
               </Button>
+            ) : (
+              <Button
+                onClick={() => {
+                  setIsOnPreview2D(!isOnPreview2D);
+                }}
+                className="w-56 mb-2 h-[2.3rem] my-2"
+              >
+                <Eye className="mr-2 h-4 w-4" />
+                {isOnPreview2D ? 'Back to Design' : 'Preview Design'}
+              </Button>
             )}
 
             {switchCanvas ? (
@@ -329,21 +343,25 @@ const CreateDesign: React.FC = () => {
                 )}
               </>
             ) : (
-              <Customize2DSideBar
-                addImage={addImage}
-                patterns={patterns}
-                addPattern={addPattern}
-                addText={addText}
-                toggleDrawingMode={toggleDrawingMode}
-                isDrawing={isDrawing}
-                brushColor={brushColor}
-                handleBrushColorChange={handleBrushColorChange}
-                brushSize={brushSize}
-                handleBrushSizeChange={handleBrushSizeChange}
-                exportDesign={exportDesign}
-                setSelectedFont={setSelectedFont}
-                selectedFont={selectedFont}
-              />
+              <>
+                {!isOnPreview2D && (
+                  <Customize2DSideBar
+                    addImage={addImage}
+                    patterns={patterns}
+                    addPattern={addPattern}
+                    addText={addText}
+                    toggleDrawingMode={toggleDrawingMode}
+                    isDrawing={isDrawing}
+                    brushColor={brushColor}
+                    handleBrushColorChange={handleBrushColorChange}
+                    brushSize={brushSize}
+                    handleBrushSizeChange={handleBrushSizeChange}
+                    exportDesign={exportDesign}
+                    setSelectedFont={setSelectedFont}
+                    selectedFont={selectedFont}
+                  />
+                )}
+              </>
             )}
           </div>
           {switchCanvas ? (
@@ -377,29 +395,32 @@ const CreateDesign: React.FC = () => {
           ) : (
             <div className="h-screen flex justify-center items-center flex-col w-full relative ">
               <div className="absolute top-5 left-5 z-40 flex flex-col space-y-4">
-                <header className="flex items-center justify-between">
-                  <h1 className="text-2xl font-bold text-black uppercase italic">
-                    Customize your T-shirt
-                  </h1>
-                </header>
+                {!isOnPreview2D && (
+                  <header className="flex items-center justify-between">
+                    <h1 className="text-2xl font-bold text-black uppercase italic">
+                      Customize your T-shirt
+                    </h1>
+                  </header>
+                )}
 
-                <div className="flex space-x-4 ">
-                  <SaveDesignDialog
-                    saveDesignID={saveDesignID}
-                    isForUpdate={isForUpdate}
-                    canvasRef={canvasRef}
-                    designNameUpdate={designName}
-                  />
-
-                  {/* place order dialog  */}
-
-                  {userRole === 'client' && (
-                    <OrderDialogTrigger
-                      switchCanvas={switchCanvas}
+                {!isOnPreview2D && (
+                  <div className="flex space-x-4 ">
+                    <SaveDesignDialog
+                      saveDesignID={saveDesignID}
+                      isForUpdate={isForUpdate}
                       canvasRef={canvasRef}
+                      designNameUpdate={designName}
                     />
-                  )}
-                </div>
+
+                    {/* place order dialog  */}
+                    {userRole === 'client' && (
+                      <OrderDialogTrigger
+                        switchCanvas={switchCanvas}
+                        canvasRef={canvasRef}
+                      />
+                    )}
+                  </div>
+                )}
               </div>
 
               <canvas id="tshirt-canvas"></canvas>
@@ -424,7 +445,8 @@ const CreateDesign: React.FC = () => {
                 </div>
               </div>
             </div>
-            <TShirtSelection />
+            {/* <TShirtSelection /> */}
+            <TshirtSelectionVersionTwo />
           </div>
         </>
       )}

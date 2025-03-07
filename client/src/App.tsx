@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { HeaderAdmin } from './pages/admin/HeaderAdmin';
 import { SidebarAdmin } from './pages/admin/SidebarAdmin';
-import TShirtSelection from './pages/components/TShirtSelection';
+import TshirtSelectionVersionTwo from './pages/TshirtSelectionVersion2';
 
 export const handleLogout = () => {
   localStorage.removeItem('isLoginMallengke');
@@ -32,7 +32,7 @@ function App() {
         <main className="flex-grow w-full min-h-screen">
           {path === '/' ? (
             <div className="min-h-screen flex flex-col">
-              <div className="py-16">
+              <div className="py-8">
                 <div className="mx-auto max-w-7xl px-6 lg:px-8">
                   <div className="mx-auto max-w-2xl text-center">
                     <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
@@ -47,7 +47,8 @@ function App() {
                 </div>
               </div>
               <main>
-                <TShirtSelection />
+                {/* <TShirtSelection /> */}
+                <TshirtSelectionVersionTwo />
               </main>
             </div>
           ) : (
