@@ -48,8 +48,8 @@ const CreateDesign: React.FC = () => {
 
     if (!canvasRef.current) {
       canvasRef.current = new fabric.Canvas(canvasElement, {
-        width: 1200,
-        height: 900,
+        width: 1300,
+        height: 1000,
         backgroundColor: '#fef6f0',
       });
     }
@@ -383,7 +383,7 @@ const CreateDesign: React.FC = () => {
                   </h1>
                 </header>
 
-                <div className="flex space-x-4">
+                <div className="flex space-x-4 ">
                   <SaveDesignDialog
                     saveDesignID={saveDesignID}
                     isForUpdate={isForUpdate}

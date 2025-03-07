@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import OrderDialog from './OrderDialog';
 
 import { Input } from '@/components/ui/input';
@@ -42,6 +42,7 @@ export function OrderDialogTrigger({
   });
 
   const [storeBlob, setStoreBlob] = useState<Blob | null>(null);
+  const [blobURL, setBlobURL] = useState<string | null>(null);
 
   const userID = localStorage.getItem('userID');
   // const [isLoading, setIsLoading] = useState(false);
@@ -51,6 +52,15 @@ export function OrderDialogTrigger({
     'idle' | 'success' | 'error'
   >('idle');
   const [uploadError, setUploadError] = useState('');
+
+  useEffect(() => {
+    if (storeBlob) {
+      if (blobURL) URL.revokeObjectURL(blobURL);
+
+      const newBlobURL = URL.createObjectURL(storeBlob);
+      setBlobURL(newBlobURL);
+    }
+  }, [storeBlob]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -211,7 +221,7 @@ export function OrderDialogTrigger({
       <DialogContent className="max-w-4xl max-h-[900px] p-2">
         {!showPayment ? (
           <OrderDialog
-            onProceedToPayment={(data) => {
+            onProceedToPayment={async (data) => {
               const generateBlob = async () => {
                 let blob: Blob | null = null;
 
@@ -297,11 +307,13 @@ export function OrderDialogTrigger({
                 )}
                 <Separator className="my-6" />
 
-                <img
-                  className="w-full h-96 object-cover rounded-lg"
-                  src={storeBlob ? URL.createObjectURL(storeBlob) : undefined}
-                  alt="order product"
-                />
+                {blobURL && (
+                  <img
+                    className="w-full h-96 object-cover rounded-lg"
+                    src={blobURL}
+                    alt="order product"
+                  />
+                )}
               </div>
 
               {/* Payment Form */}
