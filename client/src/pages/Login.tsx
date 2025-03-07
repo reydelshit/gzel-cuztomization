@@ -91,8 +91,9 @@ const Login = () => {
             <Input
               onChange={(e) => setUsername(e.target.value)}
               className="h-[4rem] placeholder:text-center placeholder:font-bold border-2  my-4 border-black bg-white rounded-xl text-center"
-              type="text"
-              placeholder="Username"
+              type="emaail"
+              placeholder="Email"
+              required
             />
 
             <Input
@@ -100,6 +101,7 @@ const Login = () => {
               className="h-[4rem] placeholder:text-center placeholder:font-bold border-2   border-black bg-white rounded-xl text-center"
               type="password"
               placeholder="Password"
+              required
             />
 
             <span className="block my-2 self-end  cursor-pointer">
